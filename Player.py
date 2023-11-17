@@ -1,5 +1,5 @@
 import pygame
-
+WIDTH, HEIGHT = 800, 600
 class Player(pygame.sprite.Sprite):
     def __init__(self, sprite_sheet_path, initial_x, initial_y):
         super().__init__()
@@ -20,7 +20,11 @@ class Player(pygame.sprite.Sprite):
         self.direction = 0  # 0: Down, 1: Left, 2: Right, 3: Up
         self.index = 0
         self.image = self.frames[self.direction * 4 + self.index]
+        self.hitbox = pygame.Rect(80, 80, 41, 57)
+    
+        self.hitbox.center = (WIDTH // 2, HEIGHT // 2)
         self.rect = self.image.get_rect()
+        self.rect.center = (WIDTH // 2, HEIGHT // 2)
 
         # Set initial position
         self.rect.x = initial_x
@@ -65,6 +69,11 @@ class Player(pygame.sprite.Sprite):
             self.rect.x = round(self.x)
             self.rect.y = round(self.y)
 
+            #self.hitbox.center = (self.rect.x, self.rect.y)
+            
+            self.hitbox.x = round(self.x + 10)
+            self.hitbox.y = round(self.y + 5)
+            
             # Update image based on direction and animation index
             self.image = self.frames[self.direction * frames_per_direction + self.index]
 

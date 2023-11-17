@@ -44,6 +44,16 @@ all_sprites.add(player)
 # Set up clock
 clock = pygame.time.Clock()
 
+rectangle_width = 700  # Adjust the width as needed
+rectangle_height = 500  # Adjust the height as needed
+
+WIDTH, HEIGHT = 800, 600
+
+rectangle_x = (WIDTH - rectangle_width) // 2
+rectangle_y = (HEIGHT - rectangle_height) // 2
+
+playableArea = pygame.Rect(rectangle_x, rectangle_y, rectangle_width, rectangle_height)
+
 # Function to continuously update the heart rate from the file
 def update_heart_rate():
     global heart_rate
@@ -65,17 +75,6 @@ heart_rate_thread.start()
 start_time = pygame.time.get_ticks()
 timer_font = pygame.font.SysFont(None, 36)
 timer_duration = 300  # Duration in seconds (5 minutes)
-
-# Calculate the dimensions and position for the white rectangle
-rectangle_width = 700  # Adjust the width as needed
-rectangle_height = 500  # Adjust the height as needed
-
-# Calculate the position to center the rectangle
-rectangle_x = (WIDTH - rectangle_width) // 2
-rectangle_y = (HEIGHT - rectangle_height) // 2
-
-# Draw the white rectangle in the middle of the screen
-white_rect = pygame.Rect(rectangle_x, rectangle_y, rectangle_width, rectangle_height)
 
 rooms = Rooms()
 
@@ -109,13 +108,13 @@ while running:
     player_speed = 2.5
     dx, dy = 0, 0
 
-    if keys[pygame.K_LEFT]:
+    if keys[pygame.K_a]:
         dx = -player_speed
-    elif keys[pygame.K_RIGHT]:
+    elif keys[pygame.K_d]:
         dx = player_speed
-    if keys[pygame.K_UP]:
+    if keys[pygame.K_w]:
         dy = -player_speed
-    elif keys[pygame.K_DOWN]:
+    elif keys[pygame.K_s]:
         dy = player_speed
 
     if dx != 0 and dy != 0:
@@ -127,7 +126,7 @@ while running:
     new_hitbox_x = player.hitbox.x + dx
     new_hitbox_y = player.hitbox.y + dy
     
-    if white_rect.contains(pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)):
+    if playableArea.contains(pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)):
         # If within bounds, update the player's position and hitbox
         player.update(dx, dy)
         player.hitbox.move(dx, dy)
@@ -150,8 +149,9 @@ while running:
 
     # Clear the screen
     screen.fill((255, 255, 255))
-    rooms.draw_room(screen)
-    pygame.draw.rect(screen, (255, 255, 255) , white_rect)
+    rooms.change_room(screen, playableArea)
+
+    #pygame.draw.rect(screen, (255, 255, 255) , white_rect)
     
     # Draw everything
     all_sprites.draw(screen)
@@ -168,7 +168,7 @@ while running:
     # Draw the flashlight circle
     pygame.draw.ellipse(black_layer, (90, 90, 0, 80), Flashlight_circle(mouse_x, mouse_y, cone_radius))
     # Apply Blur effect to shadows
-    pygame.transform.box_blur(black_layer, 20, repeat_edge_pixels=True, dest_surface=VFXblack_layer)
+    #pygame.transform.box_blur(black_layer, 20, repeat_edge_pixels=True, dest_surface=VFXblack_layer)
 
     # Blit the black layer onto the screen
     screen.blit(VFXblack_layer, (0, 0))

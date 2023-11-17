@@ -56,7 +56,7 @@ prompt_fade_speed = 5
 interactionfont = pygame.font.Font(None, 36)
 
 touchables = pygame.sprite.Group()
-spiketrap = Spiketrap(256, 256, "lib/sprites/spiketrap-1.png", (50, 50))
+spiketrap = Spiketrap(256, 256, (50, 50))
 touchables.add(spiketrap)
 
 # Set up clock
@@ -130,7 +130,13 @@ while running:
     if player.slowed:
         if remaining_time < player.slowed_time - player.slow_time:
             player.slowed = not player.slowed
-            player.player_speed = 2.5
+            player.player_speed = Player.BASE_SPEED
+            
+    # Check if player is hastened
+    if player.hastened:
+        if remaining_time < player.hastened_time - player.haste_time:
+            player.hastened = not player.hastened
+            player.player_speed = Player.BASE_SPEED
     
     dx, dy = 0, 0
 

@@ -16,12 +16,21 @@ class Touchable(pygame.sprite.Sprite):
         """
     
 class Spiketrap(Touchable):
-    def __init__(self, x, y, image_path, size):
-        super().__init__(x, y, image_path, size)
+    def __init__(self, x, y, size):
+        super().__init__(x, y, "lib/sprites/spiketrap-1.png", size)
         
     def use(self, remaining_time, player):
         player.player_speed -= 2
         player.slowed = True
         player.slowed_time = remaining_time
-        return remaining_time - 60
+        return remaining_time
         
+class Pillbottle(Touchable):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, "", size)
+        
+    def use(self, remaining_time, player):
+        player.player_speed += 2
+        player.hastened = True
+        player.hastened_time = remaining_time
+        return remaining_time

@@ -39,8 +39,8 @@ prev_mouse_x, prev_mouse_y = pygame.mouse.get_pos()
 acceleration_threshold = 150 
 
 # Set up sprite group
-all_sprites = pygame.sprite.Group()
-all_sprites.add(player)
+player_group = pygame.sprite.Group()
+player_group.add(player)
 
 #Create item instances
 item1 = InteractableItem(400, 300, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40))  # Replace "item1.png" with the actual image file
@@ -181,7 +181,7 @@ while running:
     interactable_items.draw(screen)
 
     # Draw everything
-    all_sprites.draw(screen)
+    player_group.draw(screen)
     
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)

@@ -1,6 +1,8 @@
 import pygame
 import sys
 import math
+from Player import Player
+from Flashlight import *
 
 pygame.init()
 
@@ -9,8 +11,8 @@ WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pulse Pursuit")
 
-# Load sprite sheet
-sprite_sheet = pygame.image.load("C:\\Users\\Ricky\\Pictures\\sCrkzvs.png")
+# Create player instance (passing the path to the sprite sheet)
+player = Player("C:\\Users\\Ricky\\Pictures\\sCrkzvs.png", initial_x=350, initial_y=250)
 
 #Load sound
 walk_fast = pygame.mixer.Sound("Walk_fast1.mp3")
@@ -25,72 +27,8 @@ player_angle = 0  # Initial angle
 prev_mouse_x, prev_mouse_y = pygame.mouse.get_pos()
 acceleration_threshold = 150 
 
-# Define sprite class
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-
-        # Define frames from the sprite sheet
-        self.frames = []
-        frame_width = sprite_sheet.get_width() // 4  # 4 frames in each row
-        frame_height = sprite_sheet.get_height() // 4  # 4 frames in each column
-
-        for i in range(4):  # Number of rows (directions)
-            for j in range(4):  # Number of columns (frames per direction)
-                frame = sprite_sheet.subsurface(pygame.Rect(j * frame_width, i * frame_height, frame_width, frame_height))
-                self.frames.append(frame)
-
-        self.direction = 0  # 0: Down, 1: Left, 2: Right, 3: Up
-        self.index = 0
-        self.image = self.frames[self.direction * 4 + self.index]
-        self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH // 2, HEIGHT // 2)
-
-        # Floating-point position
-        self.x = float(self.rect.x)
-        self.y = float(self.rect.y)
-
-        # Distance traveled
-        self.distance_traveled = 0.0
-
-    def update(self, dx=0, dy=0):
-        # Update only if there is movement
-        if dx != 0 or dy != 0:
-            # Update direction based on movement
-            if dx > 0:
-                self.direction = 2  # Right
-            elif dx < 0:
-                self.direction = 1  # Left
-            if dy > 0:
-                self.direction = 0  # Down
-            elif dy < 0:
-                self.direction = 3  # Up
-
-            # Update floating-point position
-            self.x += dx
-            self.y += dy
-
-            # Calculate distance traveled
-            distance_moved = pygame.math.Vector2(dx, dy).length()
-            self.distance_traveled += distance_moved
-
-            # Update animation based on distance traveled
-            animation_speed = 0.05  # Adjust the speed as needed
-            frames_per_direction = 4
-            frames_total = frames_per_direction * 4
-            animation_index = int(self.distance_traveled * animation_speed) % frames_total
-            self.index = animation_index % frames_per_direction
-
-            # Round to integers for rendering
-            self.rect.x = round(self.x)
-            self.rect.y = round(self.y)
-
-            # Update image based on direction and animation index
-            self.image = self.frames[self.direction * frames_per_direction + self.index]
-
 # Set up sprite group
 all_sprites = pygame.sprite.Group()
-player = Player()
 all_sprites.add(player)
 
 # Set up clock
@@ -116,7 +54,6 @@ while running:
         #print(f"Mouse Accelerated: {speed}") #prints out speed when high acceleration is detected
         flashlight_shake.play()
         flashlight_shake.fadeout(500)
-
 
     prev_mouse_x = mouse_x
     prev_mouse_y = mouse_y
@@ -151,40 +88,8 @@ while running:
             walk_fast.fadeout(500)
             print(sound_played_walk)
 
-
-
-
     # Update sprites
     all_sprites.update(dx, dy)
-
-    # Calculate Flashlight
-    # Calculate cone vertices based on the player's position and angle
-    offset_factor = 0.75 + 0.25 * (1 - min(1, distance / 80))
-    
-    cone_vertices = [
-        (
-            player.rect.center[0],
-            player.rect.center[1],
-        ),
-        # Update the point calculation with the adjusted factor
-        (
-            player.rect.center[0]
-            + int(cone_radius * math.cos(player_angle - math.pi / 5))
-            + offset_factor * int(distance * math.cos(player_angle)),
-            player.rect.center[1]
-            + int(cone_radius * math.sin(player_angle - math.pi / 5))
-            + offset_factor * int(distance * math.sin(player_angle)),
-        ),
-        (
-            player.rect.center[0]
-            + int(cone_radius * math.cos(player_angle + math.pi / 5))
-            + offset_factor * int(distance * math.cos(player_angle)),
-            player.rect.center[1]
-            + int(cone_radius * math.sin(player_angle + math.pi / 5))
-            + offset_factor * int(distance * math.sin(player_angle)),
-        )
-    ]
-
 
     # Clear the screen
     screen.fill((255, 255, 255))
@@ -197,30 +102,13 @@ while running:
     black_layer.fill((0, 0, 0, 255))  # Adjust alpha value as needed
     VFXblack_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
-    # Draw the ellipse following the player
-    ellipse_radius_x = 50  # Adjust the x-axis radius as needed
-    ellipse_radius_y = 50  # Adjust the y-axis radius as needed
-    player_center = player.rect.center
-    ellipse_rect = pygame.Rect(
-    player_center[0] - ellipse_radius_x,
-    player_center[1] - ellipse_radius_y,
-    2 * ellipse_radius_x,
-    2 * ellipse_radius_y,
-    )
-    pygame.draw.ellipse(black_layer, (0, 0, 0, 210), ellipse_rect)
-    
+    # Draw the peripheral vision
+    pygame.draw.ellipse(black_layer, (0, 0, 0, 210), Peripheral_vision(player.rect.center))
     # Draw the flashlight cone
-    pygame.draw.polygon(black_layer, (90, 90, 0, 150) , cone_vertices)
-
-    # Draw the ellipse following the flashlight
-    ellipse_light = pygame.Rect(
-    mouse_x-50,
-    mouse_y-50,
-    cone_radius,
-    cone_radius,
-    )
-    pygame.draw.ellipse(black_layer, (90, 90, 0, 80), ellipse_light)
-
+    pygame.draw.polygon(black_layer, (90, 90, 0, 150) , Flashlight_cone(distance, cone_radius, player_angle, player.rect.center))
+    # Draw the flashlight circle
+    pygame.draw.ellipse(black_layer, (90, 90, 0, 80), Flashlight_circle(mouse_x, mouse_y, cone_radius))
+    # Apply Blur effect to shadows
     pygame.transform.box_blur(black_layer, 20, repeat_edge_pixels=True, dest_surface=VFXblack_layer)
 
     # Blit the black layer onto the screen

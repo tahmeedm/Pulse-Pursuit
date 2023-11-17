@@ -122,13 +122,13 @@ while running:
     player_speed = 2.5
     dx, dy = 0, 0
 
-    if keys[pygame.K_LEFT]:
+    if keys[pygame.K_a]:
         dx = -player_speed
-    elif keys[pygame.K_RIGHT]:
+    elif keys[pygame.K_d]:
         dx = player_speed
-    if keys[pygame.K_UP]:
+    if keys[pygame.K_w]:
         dy = -player_speed
-    elif keys[pygame.K_DOWN]:
+    elif keys[pygame.K_s]:
         dy = player_speed
 
     if dx != 0 and dy != 0:

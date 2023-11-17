@@ -1,15 +1,21 @@
 import pygame
 import sys
+import math
 
 pygame.init()
 
 # Set up display
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Smooth Movement RPG Example")
+pygame.display.set_caption("Pulse Pursuit")
 
 # Load sprite sheet
 sprite_sheet = pygame.image.load("C:\\Users\\Ricky\\Pictures\\sCrkzvs.png")
+
+# Flashlight parameters
+cone_radius = 50
+cone_height = 100
+player_angle = 0  # Initial angle
 
 # Define sprite class
 class Player(pygame.sprite.Sprite):
@@ -89,6 +95,12 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    # Mouse tracking
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    distance = math.sqrt(((mouse_x - player.rect.center[0]) ** 2) + ((mouse_y - player.rect.center[1]) ** 2))
+    # Calculate the angle between player and mouse
+    player_angle = math.atan2(mouse_y - player.rect.center[1], mouse_x - player.rect.center[0])
+
     # Player movement
     keys = pygame.key.get_pressed()
     player_speed = 2.5  # Adjust the speed as needed
@@ -111,9 +123,55 @@ while running:
     # Update sprites
     all_sprites.update(dx, dy)
 
-    # Draw everything
+    # Calculate Flashlight
+    # Calculate cone vertices based on the player's position and angle
+    cone_vertices = [
+        (
+            player.rect.center[0],
+            player.rect.center[1],
+        ),
+        (
+            player.rect.center[0]
+            + int(cone_radius * math.cos(player_angle - math.pi / 4)) + int(distance * math.cos(player_angle)),
+            player.rect.center[1]
+            + int(cone_radius * math.sin(player_angle - math.pi / 4)) + int(distance * math.sin(player_angle)),
+        ),
+        (
+            player.rect.center[0]
+            + int(cone_radius * math.cos(player_angle + math.pi / 4)) + int(distance * math.cos(player_angle)),
+            player.rect.center[1]
+            + int(cone_radius * math.sin(player_angle + math.pi / 4)) + int(distance * math.sin(player_angle)),
+        ),
+    ]
+
+    # Clear the screen
     screen.fill((255, 255, 255))
+
+    # Draw everything
     all_sprites.draw(screen)
+    
+    # Draw the black layer on top of the background
+    black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    black_layer.fill((0, 0, 0, 255))  # Adjust alpha value as needed
+    
+    # Draw the flashlight cone
+    pygame.draw.polygon(black_layer, (0, 0, 0, 0) , cone_vertices)
+    
+    
+    # Draw the ellipse following the player
+    ellipse_radius_x = 50  # Adjust the x-axis radius as needed
+    ellipse_radius_y = 50  # Adjust the y-axis radius as needed
+    player_center = player.rect.center
+    ellipse_rect = pygame.Rect(
+    player_center[0] - ellipse_radius_x,
+    player_center[1] - ellipse_radius_y,
+    2 * ellipse_radius_x,
+    2 * ellipse_radius_y,
+    )
+    pygame.draw.ellipse(black_layer, (0, 0, 0, 0), ellipse_rect)
+
+    # Blit the black layer onto the screen
+    screen.blit(black_layer, (0, 0))
 
     pygame.display.flip()
 

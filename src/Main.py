@@ -4,6 +4,7 @@ import math
 from Player import *
 from Flashlight import *
 from Rooms import *
+from Interactables import *
 import threading
 import time
 import subprocess
@@ -40,6 +41,18 @@ acceleration_threshold = 150
 # Set up sprite group
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
+
+#Create item instances
+item1 = InteractableItem(400, 300, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40))  # Replace "item1.png" with the actual image file
+item2 = InteractableItem(200, 100, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40))  # Replace "item2.png" with the actual image file
+interactable_items = pygame.sprite.Group(item1, item2)
+# Set up interaction range
+interaction_range = 50
+# Set up prompt
+prompt_text = "Press 'F' to Interact"
+prompt_alpha = 0
+prompt_fade_speed = 5
+interactionfont = pygame.font.Font(None, 36)
 
 # Set up clock
 clock = pygame.time.Clock()
@@ -153,6 +166,20 @@ while running:
     rooms.draw_room(screen)
     pygame.draw.rect(screen, (255, 255, 255) , white_rect)
     
+    #Check for interactions with each item
+    for item in pygame.sprite.spritecollide(player, interactable_items, False):
+        # Interaction logic
+        if keys[pygame.K_f]:
+            print(f"Interacted with the item at ({item.rect.centerx}, {item.rect.centery})!")
+
+    # Update prompt alpha based on player's proximity to the closest item
+    closest_item = min(interactable_items, key=lambda item: pygame.math.Vector2(item.rect.centerx - player.rect.centerx, item.rect.centery - player.rect.centery).length())
+    closest_distance = pygame.math.Vector2(closest_item.rect.centerx - player.rect.centerx, closest_item.rect.centery - player.rect.centery).length()
+    prompt_alpha = min(255, prompt_alpha + prompt_fade_speed) if closest_distance < interaction_range else max(0, prompt_alpha - prompt_fade_speed)
+
+    # Draw interactable items
+    interactable_items.draw(screen)
+
     # Draw everything
     all_sprites.draw(screen)
     
@@ -184,6 +211,11 @@ while running:
     seconds = int(remaining_time % 60)
     timer_text = timer_font.render(f'{minutes}:{seconds:02}', True, (255, 255, 255))
     screen.blit(timer_text, (10, HEIGHT - 40))  # Position at the bottom-left corner
+
+    # Draw interaction prompt
+    prompt_surface = interactionfont.render(prompt_text, True, (255, 255, 255))
+    prompt_surface.set_alpha(prompt_alpha)
+    screen.blit(prompt_surface, (300, 400))
 
     pygame.display.flip()
     clock.tick(60)

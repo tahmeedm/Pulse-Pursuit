@@ -6,12 +6,12 @@ import socket
 
 
 def write_hr(hr="0"):
-    file = open('./hr.txt', 'w+')
+    file = open('lib/hr.txt', 'w+')
     file.write("{}".format(hr))
     file.close()
 
 def read_hr():
-    file = open('./hr.txt', 'r')
+    file = open('lib/hr.txt', 'r')
     hr = file.readline()
     file.close()
     return hr

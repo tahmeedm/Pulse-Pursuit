@@ -4,6 +4,7 @@ import math
 from Player import *
 from Flashlight import *
 from Rooms import *
+from Touchables import *
 from Interactables import *
 import threading
 import time
@@ -54,6 +55,10 @@ prompt_alpha = 0
 prompt_fade_speed = 5
 interactionfont = pygame.font.Font(None, 36)
 
+touchables = pygame.sprite.Group()
+spiketrap = Spiketrap(256, 256, (50, 50))
+touchables.add(spiketrap)
+
 # Set up clock
 clock = pygame.time.Clock()
 
@@ -78,6 +83,7 @@ heart_rate_thread.start()
 start_time = pygame.time.get_ticks()
 timer_font = pygame.font.SysFont(None, 36)
 timer_duration = 300  # Duration in seconds (5 minutes)
+remaining_time = timer_duration
 
 # Calculate the dimensions and position for the white rectangle
 rectangle_width = 700  # Adjust the width as needed
@@ -119,17 +125,29 @@ while running:
 
     # Player movement
     keys = pygame.key.get_pressed()
-    player_speed = 2.5
+    
+    # Check if player is slowed
+    if player.slowed:
+        if remaining_time < player.slowed_time - player.slow_time:
+            player.slowed = not player.slowed
+            player.player_speed = Player.BASE_SPEED
+            
+    # Check if player is hastened
+    if player.hastened:
+        if remaining_time < player.hastened_time - player.haste_time:
+            player.hastened = not player.hastened
+            player.player_speed = Player.BASE_SPEED
+    
     dx, dy = 0, 0
 
     if keys[pygame.K_a]:
-        dx = -player_speed
+        dx = -player.player_speed
     elif keys[pygame.K_d]:
-        dx = player_speed
+        dx = player.player_speed
     if keys[pygame.K_w]:
-        dy = -player_speed
+        dy = -player.player_speed
     elif keys[pygame.K_s]:
-        dy = player_speed
+        dy = player.player_speed
 
     if dx != 0 and dy != 0:
 
@@ -159,8 +177,12 @@ while running:
         dx /= 1.41
         dy /= 1.41
 
-    #all_sprites.update(dx, dy)
-
+    # Check if player touches a Touchable
+    touchable = pygame.sprite.spritecollideany(player, touchables)
+    if touchable is not None:
+        touchable.use(remaining_time, player)
+        touchable.kill()
+        
     # Clear the screen
     screen.fill((255, 255, 255))
     rooms.draw_room(screen)
@@ -182,6 +204,7 @@ while running:
 
     # Draw everything
     player_group.draw(screen)
+    touchables.draw(screen)
     
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)

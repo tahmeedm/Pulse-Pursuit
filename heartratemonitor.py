@@ -3,7 +3,6 @@ from sys import argv
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import socket
 
-# inspired from https://gist.github.com/mdonkers/63e115cc0c79b4f6b8b3a6b797e485c7
 
 
 def write_hr(hr="0"):

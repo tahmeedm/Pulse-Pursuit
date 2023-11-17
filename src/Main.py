@@ -4,6 +4,8 @@ import math
 from Player import *
 from Flashlight import *
 from Rooms import *
+from Touchables import *
+from Interactables import *
 import threading
 import time
 import subprocess
@@ -38,8 +40,24 @@ prev_mouse_x, prev_mouse_y = pygame.mouse.get_pos()
 acceleration_threshold = 150 
 
 # Set up sprite group
-all_sprites = pygame.sprite.Group()
-all_sprites.add(player)
+player_group = pygame.sprite.Group()
+player_group.add(player)
+
+#Create item instances
+item1 = InteractableItem(400, 300, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40))  # Replace "item1.png" with the actual image file
+item2 = InteractableItem(200, 100, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40))  # Replace "item2.png" with the actual image file
+interactable_items = pygame.sprite.Group(item1, item2)
+# Set up interaction range
+interaction_range = 50
+# Set up prompt
+prompt_text = "Press 'F' to Interact"
+prompt_alpha = 0
+prompt_fade_speed = 5
+interactionfont = pygame.font.Font(None, 36)
+
+touchables = pygame.sprite.Group()
+spiketrap = Spiketrap(256, 256, "lib/sprites/spiketrap-1.png", (50, 50))
+touchables.add(spiketrap)
 
 # Set up clock
 clock = pygame.time.Clock()
@@ -59,7 +77,7 @@ def update_heart_rate():
     global heart_rate
     while True:
         try:
-            with open('./hr.txt', 'r') as file:
+            with open('lib/hr.txt', 'r') as file:
                 heart_rate = file.readline().strip()
         except:
             heart_rate = 'N/A'
@@ -75,6 +93,7 @@ heart_rate_thread.start()
 start_time = pygame.time.get_ticks()
 timer_font = pygame.font.SysFont(None, 36)
 timer_duration = 300  # Duration in seconds (5 minutes)
+remaining_time = timer_duration
 
 rooms = Rooms()
 
@@ -105,17 +124,23 @@ while running:
 
     # Player movement
     keys = pygame.key.get_pressed()
-    player_speed = 2.5
+    
+    # Check if player is slowed
+    if player.slowed:
+        if remaining_time < player.slowed_time - player.slow_time:
+            player.slowed = not player.slowed
+            player.player_speed = 2.5
+    
     dx, dy = 0, 0
 
     if keys[pygame.K_a]:
-        dx = -player_speed
+        dx = -player.player_speed
     elif keys[pygame.K_d]:
-        dx = player_speed
+        dx = player.player_speed
     if keys[pygame.K_w]:
-        dy = -player_speed
+        dy = -player.player_speed
     elif keys[pygame.K_s]:
-        dy = player_speed
+        dy = player.player_speed
 
     if dx != 0 and dy != 0:
 
@@ -145,16 +170,35 @@ while running:
         dx /= 1.41
         dy /= 1.41
 
-    #all_sprites.update(dx, dy)
-
+    # Check if player touches a Touchable
+    touchable = pygame.sprite.spritecollideany(player, touchables)
+    if touchable is not None:
+        touchable.use(remaining_time, player)
+        touchable.kill()
+        
     # Clear the screen
     screen.fill((255, 255, 255))
     rooms.change_room(screen, playableArea)
 
     #pygame.draw.rect(screen, (255, 255, 255) , white_rect)
     
+    #Check for interactions with each item
+    for item in pygame.sprite.spritecollide(player, interactable_items, False):
+        # Interaction logic
+        if keys[pygame.K_f]:
+            print(f"Interacted with the item at ({item.rect.centerx}, {item.rect.centery})!")
+
+    # Update prompt alpha based on player's proximity to the closest item
+    closest_item = min(interactable_items, key=lambda item: pygame.math.Vector2(item.rect.centerx - player.rect.centerx, item.rect.centery - player.rect.centery).length())
+    closest_distance = pygame.math.Vector2(closest_item.rect.centerx - player.rect.centerx, closest_item.rect.centery - player.rect.centery).length()
+    prompt_alpha = min(255, prompt_alpha + prompt_fade_speed) if closest_distance < interaction_range else max(0, prompt_alpha - prompt_fade_speed)
+
+    # Draw interactable items
+    interactable_items.draw(screen)
+
     # Draw everything
-    all_sprites.draw(screen)
+    player_group.draw(screen)
+    touchables.draw(screen)
     
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
@@ -184,6 +228,11 @@ while running:
     seconds = int(remaining_time % 60)
     timer_text = timer_font.render(f'{minutes}:{seconds:02}', True, (255, 255, 255))
     screen.blit(timer_text, (10, HEIGHT - 40))  # Position at the bottom-left corner
+
+    # Draw interaction prompt
+    prompt_surface = interactionfont.render(prompt_text, True, (255, 255, 255))
+    prompt_surface.set_alpha(prompt_alpha)
+    screen.blit(prompt_surface, (300, 400))
 
     pygame.display.flip()
     clock.tick(60)

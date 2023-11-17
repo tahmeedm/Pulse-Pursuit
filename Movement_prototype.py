@@ -19,7 +19,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pulse Pursuit")
 
 # Create player instance (passing the path to the sprite sheet)
-player = Player("C:\\Users\\Ricky\\Pictures\\sCrkzvs.png", initial_x=350, initial_y=250)
+player = Player("sCrkzvs.png", initial_x=350, initial_y=250)
 
 #Load sound
 walk_fast = pygame.mixer.Sound("Walk_fast1.mp3")
@@ -147,7 +147,7 @@ while running:
     screen.blit(VFXblack_layer, (0, 0))
 
     # Display heart rate
-    heart_rate_text = font.render(f'Heart Rate: {heart_rate} BPM', True, (0, 0, 0))
+    heart_rate_text = font.render(f'Heart Rate: {heart_rate} BPM', True, (255, 255, 255))
     screen.blit(heart_rate_text, (10, 10))
 
     # Timer countdown
@@ -155,7 +155,7 @@ while running:
     remaining_time = max(timer_duration - elapsed_time, 0)
     minutes = int(remaining_time // 60)
     seconds = int(remaining_time % 60)
-    timer_text = timer_font.render(f'{minutes}:{seconds:02}', True, (0, 0, 0))
+    timer_text = timer_font.render(f'{minutes}:{seconds:02}', True, (255, 255, 255))
     screen.blit(timer_text, (10, HEIGHT - 40))  # Position at the bottom-left corner
 
     pygame.display.flip()

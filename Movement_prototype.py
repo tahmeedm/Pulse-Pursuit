@@ -92,6 +92,11 @@ heart_rate_thread = threading.Thread(target=update_heart_rate)
 heart_rate_thread.daemon = True
 heart_rate_thread.start()
 
+# Timer setup
+start_time = pygame.time.get_ticks()
+timer_font = pygame.font.SysFont(None, 36)
+timer_duration = 300  # Duration in seconds (5 minutes)
+
 # Main game loop
 running = True
 font = pygame.font.SysFont(None, 36)
@@ -122,8 +127,17 @@ while running:
     screen.fill((255, 255, 255))
     all_sprites.draw(screen)
 
+    # Display heart rate
     heart_rate_text = font.render(f'Heart Rate: {heart_rate} BPM', True, (0, 0, 0))
     screen.blit(heart_rate_text, (10, 10))
+
+    # Timer countdown
+    elapsed_time = (pygame.time.get_ticks() - start_time) / 1000  # Convert milliseconds to seconds
+    remaining_time = max(timer_duration - elapsed_time, 0)
+    minutes = int(remaining_time // 60)
+    seconds = int(remaining_time % 60)
+    timer_text = timer_font.render(f'{minutes}:{seconds:02}', True, (0, 0, 0))
+    screen.blit(timer_text, (10, HEIGHT - 40))  # Position at the bottom-left corner
 
     pygame.display.flip()
     clock.tick(60)

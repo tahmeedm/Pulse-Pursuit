@@ -49,7 +49,7 @@ def update_heart_rate():
     global heart_rate
     while True:
         try:
-            with open('./hr.txt', 'r') as file:
+            with open('lib/hr.txt', 'r') as file:
                 heart_rate = file.readline().strip()
         except:
             heart_rate = 'N/A'

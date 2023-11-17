@@ -1,19 +1,40 @@
 import pygame
 import sys
 import math
-from Player import Player
+from Player import *
 from Flashlight import *
 import threading
 import time
 import subprocess
 
+WIDTH, HEIGHT = 800, 600
+
+class Rooms:
+    def __init__(self):
+        self.current_room = 0
+        self.room_backgrounds = [
+            pygame.image.load("bg1.webp"),
+            #pygame.image.load("background2.png"),
+            # Add more backgrounds as needed
+        ]
+        self.current_background = self.room_backgrounds[self.current_room]
+
+    def change_room(self):
+        self.current_room = (self.current_room + 1) % len(self.room_backgrounds)
+        self.current_background = self.room_backgrounds[self.current_room]
+
+    def draw_room(self, screen):
+        # Draw the current room's background
+        screen.blit(self.current_background, (0, 0))
+        # Add code to draw other elements of the room based on the background
+rooms = Rooms()
 # Start the heart rate monitor script as a subprocess
 subprocess.Popen(["python", "heartratemonitor.py"])
 
 pygame.init()
 
 # Set up display
-WIDTH, HEIGHT = 800, 600
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 pygame.display.set_caption("Pulse Pursuit")
@@ -63,6 +84,17 @@ start_time = pygame.time.get_ticks()
 timer_font = pygame.font.SysFont(None, 36)
 timer_duration = 300  # Duration in seconds (5 minutes)
 
+# Calculate the dimensions and position for the white rectangle
+rectangle_width = 700  # Adjust the width as needed
+rectangle_height = 500  # Adjust the height as needed
+
+# Calculate the position to center the rectangle
+rectangle_x = (WIDTH - rectangle_width) // 2
+rectangle_y = (HEIGHT - rectangle_height) // 2
+
+# Draw the white rectangle in the middle of the screen
+white_rect = pygame.Rect(rectangle_x, rectangle_y, rectangle_width, rectangle_height)
+
 # Main game loop
 running = True
 font = pygame.font.SysFont(None, 36)
@@ -107,6 +139,15 @@ while running:
         dx /= 1.41  # Adjust for diagonal movement to maintain the same speed
         dy /= 1.41  
 
+     # Temporary variables for the new hitbox position
+    new_hitbox_x = player.hitbox.x + dx
+    new_hitbox_y = player.hitbox.y + dy
+    
+    if white_rect.contains(pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)):
+        # If within bounds, update the player's position and hitbox
+        player.update(dx, dy)
+        player.hitbox.move(dx, dy)
+    
     if dx != 0 or dy != 0:
         if not sound_played_walk:
             sound_played_walk = True
@@ -121,11 +162,13 @@ while running:
         dx /= 1.41
         dy /= 1.41
 
-    all_sprites.update(dx, dy)
+    #all_sprites.update(dx, dy)
 
     # Clear the screen
     screen.fill((255, 255, 255))
-
+    rooms.draw_room(screen)
+    pygame.draw.rect(screen, (255, 255, 255) , white_rect)
+    
     # Draw everything
     all_sprites.draw(screen)
     
@@ -158,6 +201,8 @@ while running:
     timer_text = timer_font.render(f'{minutes}:{seconds:02}', True, (255, 255, 255))
     screen.blit(timer_text, (10, HEIGHT - 40))  # Position at the bottom-left corner
 
+   
+    
     pygame.display.flip()
     clock.tick(60)
 

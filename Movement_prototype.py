@@ -1,5 +1,8 @@
 import pygame
 import sys
+import math
+from Player import Player
+from Flashlight import *
 import threading
 import time
 import subprocess
@@ -12,64 +15,27 @@ pygame.init()
 # Set up display
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Smooth Movement RPG Example")
 
-# Load sprite sheet
-sprite_sheet = pygame.image.load("sCrkzvs.png")
+pygame.display.set_caption("Pulse Pursuit")
 
-# Define sprite class
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        # Define frames from the sprite sheet
-        self.frames = []
-        frame_width = sprite_sheet.get_width() // 4
-        frame_height = sprite_sheet.get_height() // 4
+# Create player instance (passing the path to the sprite sheet)
+player = Player("C:\\Users\\Ricky\\Pictures\\sCrkzvs.png", initial_x=350, initial_y=250)
 
-        for i in range(4):
-            for j in range(4):
-                frame = sprite_sheet.subsurface(pygame.Rect(j * frame_width, i * frame_height, frame_width, frame_height))
-                self.frames.append(frame)
+#Load sound
+walk_fast = pygame.mixer.Sound("Walk_fast1.mp3")
+sound_played_walk = bool(0)
+flashlight_shake = pygame.mixer.Sound("Flashlight_shake1.mp3")
 
-        self.direction = 0
-        self.index = 0
-        self.image = self.frames[self.direction * 4 + self.index]
-        self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH // 2, HEIGHT // 2)
+# Flashlight parameters
+cone_radius = 100
+cone_height = 100
+player_angle = 0  # Initial angle
 
-        self.x = float(self.rect.x)
-        self.y = float(self.rect.y)
-        self.distance_traveled = 0.0
-
-    def update(self, dx=0, dy=0):
-        if dx != 0 or dy != 0:
-            if dx > 0:
-                self.direction = 2
-            elif dx < 0:
-                self.direction = 1
-            if dy > 0:
-                self.direction = 0
-            elif dy < 0:
-                self.direction = 3
-
-            self.x += dx
-            self.y += dy
-            distance_moved = pygame.math.Vector2(dx, dy).length()
-            self.distance_traveled += distance_moved
-
-            animation_speed = 0.1
-            frames_per_direction = 4
-            frames_total = frames_per_direction * 4
-            animation_index = int(self.distance_traveled * animation_speed) % frames_total
-            self.index = animation_index % frames_per_direction
-
-            self.rect.x = round(self.x)
-            self.rect.y = round(self.y)
-            self.image = self.frames[self.direction * frames_per_direction + self.index]
+prev_mouse_x, prev_mouse_y = pygame.mouse.get_pos()
+acceleration_threshold = 150 
 
 # Set up sprite group
 all_sprites = pygame.sprite.Group()
-player = Player()
 all_sprites.add(player)
 
 # Set up clock
@@ -105,6 +71,24 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    # Mouse tracking
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    distance = math.sqrt(((mouse_x - player.rect.center[0]) ** 2) + ((mouse_y - player.rect.center[1]) ** 2))
+    # Calculate the angle between player and mouse
+    player_angle = math.atan2(mouse_y - player.rect.center[1], mouse_x - player.rect.center[0])
+
+    mousedelta = pygame.math.Vector2(mouse_x - prev_mouse_x, mouse_y - prev_mouse_y)
+    speed = mousedelta.length()
+
+    if speed > acceleration_threshold:
+        #print(f"Mouse Accelerated: {speed}") #prints out speed when high acceleration is detected
+        flashlight_shake.play()
+        flashlight_shake.fadeout(500)
+
+    prev_mouse_x = mouse_x
+    prev_mouse_y = mouse_y
+
+    # Player movement
     keys = pygame.key.get_pressed()
     player_speed = 2.5
     dx, dy = 0, 0
@@ -119,13 +103,48 @@ while running:
         dy = player_speed
 
     if dx != 0 and dy != 0:
+
+        dx /= 1.41  # Adjust for diagonal movement to maintain the same speed
+        dy /= 1.41  
+
+    if dx != 0 or dy != 0:
+        if not sound_played_walk:
+            sound_played_walk = True
+            walk_fast.play(loops=-1)  # Set loops to -1 for infinite looping
+            print(sound_played_walk)
+    else:
+        if sound_played_walk:
+            sound_played_walk = False
+            walk_fast.fadeout(500)
+            print(sound_played_walk)
+
         dx /= 1.41
         dy /= 1.41
 
     all_sprites.update(dx, dy)
 
+    # Clear the screen
     screen.fill((255, 255, 255))
+
+    # Draw everything
     all_sprites.draw(screen)
+    
+    # Draw the black layer on top of the background
+    black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    black_layer.fill((0, 0, 0, 255))  # Adjust alpha value as needed
+    VFXblack_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+
+    # Draw the peripheral vision
+    pygame.draw.ellipse(black_layer, (0, 0, 0, 210), Peripheral_vision(player.rect.center))
+    # Draw the flashlight cone
+    pygame.draw.polygon(black_layer, (90, 90, 0, 150) , Flashlight_cone(distance, cone_radius, player_angle, player.rect.center))
+    # Draw the flashlight circle
+    pygame.draw.ellipse(black_layer, (90, 90, 0, 80), Flashlight_circle(mouse_x, mouse_y, cone_radius))
+    # Apply Blur effect to shadows
+    pygame.transform.box_blur(black_layer, 20, repeat_edge_pixels=True, dest_surface=VFXblack_layer)
+
+    # Blit the black layer onto the screen
+    screen.blit(VFXblack_layer, (0, 0))
 
     # Display heart rate
     heart_rate_text = font.render(f'Heart Rate: {heart_rate} BPM', True, (0, 0, 0))

@@ -12,13 +12,18 @@ pygame.display.set_caption("Pulse Pursuit")
 # Load sprite sheet
 sprite_sheet = pygame.image.load("C:\\Users\\Ricky\\Pictures\\sCrkzvs.png")
 
-#Load walk sound
+#Load sound
 walk_fast = pygame.mixer.Sound("Walk_fast1.mp3")
+sound_played_walk = bool(0)
+flashlight_shake = pygame.mixer.Sound("Flashlight_shake1.mp3")
 
 # Flashlight parameters
 cone_radius = 100
 cone_height = 100
 player_angle = 0  # Initial angle
+
+prev_mouse_x, prev_mouse_y = pygame.mouse.get_pos()
+acceleration_threshold = 150 
 
 # Define sprite class
 class Player(pygame.sprite.Sprite):
@@ -70,7 +75,7 @@ class Player(pygame.sprite.Sprite):
             self.distance_traveled += distance_moved
 
             # Update animation based on distance traveled
-            animation_speed = 0.1  # Adjust the speed as needed
+            animation_speed = 0.05  # Adjust the speed as needed
             frames_per_direction = 4
             frames_total = frames_per_direction * 4
             animation_index = int(self.distance_traveled * animation_speed) % frames_total
@@ -104,6 +109,18 @@ while running:
     # Calculate the angle between player and mouse
     player_angle = math.atan2(mouse_y - player.rect.center[1], mouse_x - player.rect.center[0])
 
+    mousedelta = pygame.math.Vector2(mouse_x - prev_mouse_x, mouse_y - prev_mouse_y)
+    speed = mousedelta.length()
+
+    if speed > acceleration_threshold:
+        #print(f"Mouse Accelerated: {speed}") #prints out speed when high acceleration is detected
+        flashlight_shake.play()
+        flashlight_shake.fadeout(500)
+
+
+    prev_mouse_x = mouse_x
+    prev_mouse_y = mouse_y
+
     # Player movement
     keys = pygame.key.get_pressed()
     player_speed = 2.5  # Adjust the speed as needed
@@ -121,13 +138,21 @@ while running:
     # Diagonal movement
     if dx != 0 and dy != 0:
         dx /= 1.41  # Adjust for diagonal movement to maintain the same speed
-        dy /= 1.41
-    
-    # Walking Sound
-    if dx != 0 or dy !=0:
-        pygame.mixer.Sound.play(walk_fast)
+        dy /= 1.41  
+
+    if dx != 0 or dy != 0:
+        if not sound_played_walk:
+            sound_played_walk = True
+            walk_fast.play(loops=-1)  # Set loops to -1 for infinite looping
+            print(sound_played_walk)
     else:
-        pygame.mixer.Sound.stop(walk_fast)
+        if sound_played_walk:
+            sound_played_walk = False
+            walk_fast.fadeout(500)
+            print(sound_played_walk)
+
+
+
 
     # Update sprites
     all_sprites.update(dx, dy)

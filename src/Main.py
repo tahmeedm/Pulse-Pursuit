@@ -58,6 +58,8 @@ interactionfont = pygame.font.Font(None, 36)
 touchables = pygame.sprite.Group()
 spiketrap = Spiketrap(256, 256, (50, 50))
 touchables.add(spiketrap)
+pillbottle = Pillbottle(512, 512, (50, 50))
+touchables.add(pillbottle)
 
 # Set up clock
 clock = pygame.time.Clock()

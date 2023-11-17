@@ -3,12 +3,19 @@ import sys
 import math
 from Player import Player
 from Flashlight import *
+import threading
+import time
+import subprocess
+
+# Start the heart rate monitor script as a subprocess
+subprocess.Popen(["python", "heartratemonitor.py"])
 
 pygame.init()
 
 # Set up display
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
 pygame.display.set_caption("Pulse Pursuit")
 
 # Create player instance (passing the path to the sprite sheet)
@@ -34,8 +41,31 @@ all_sprites.add(player)
 # Set up clock
 clock = pygame.time.Clock()
 
+# Function to continuously update the heart rate from the file
+def update_heart_rate():
+    global heart_rate
+    while True:
+        try:
+            with open('./hr.txt', 'r') as file:
+                heart_rate = file.readline().strip()
+        except:
+            heart_rate = 'N/A'
+        time.sleep(1)
+
+# Thread for updating heart rate
+heart_rate = '0'
+heart_rate_thread = threading.Thread(target=update_heart_rate)
+heart_rate_thread.daemon = True
+heart_rate_thread.start()
+
+# Timer setup
+start_time = pygame.time.get_ticks()
+timer_font = pygame.font.SysFont(None, 36)
+timer_duration = 300  # Duration in seconds (5 minutes)
+
 # Main game loop
 running = True
+font = pygame.font.SysFont(None, 36)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -60,7 +90,7 @@ while running:
 
     # Player movement
     keys = pygame.key.get_pressed()
-    player_speed = 2.5  # Adjust the speed as needed
+    player_speed = 2.5
     dx, dy = 0, 0
 
     if keys[pygame.K_LEFT]:
@@ -72,8 +102,8 @@ while running:
     elif keys[pygame.K_DOWN]:
         dy = player_speed
 
-    # Diagonal movement
     if dx != 0 and dy != 0:
+
         dx /= 1.41  # Adjust for diagonal movement to maintain the same speed
         dy /= 1.41  
 
@@ -88,7 +118,9 @@ while running:
             walk_fast.fadeout(500)
             print(sound_played_walk)
 
-    # Update sprites
+        dx /= 1.41
+        dy /= 1.41
+
     all_sprites.update(dx, dy)
 
     # Clear the screen
@@ -114,10 +146,20 @@ while running:
     # Blit the black layer onto the screen
     screen.blit(VFXblack_layer, (0, 0))
 
+    # Display heart rate
+    heart_rate_text = font.render(f'Heart Rate: {heart_rate} BPM', True, (0, 0, 0))
+    screen.blit(heart_rate_text, (10, 10))
+
+    # Timer countdown
+    elapsed_time = (pygame.time.get_ticks() - start_time) / 1000  # Convert milliseconds to seconds
+    remaining_time = max(timer_duration - elapsed_time, 0)
+    minutes = int(remaining_time // 60)
+    seconds = int(remaining_time % 60)
+    timer_text = timer_font.render(f'{minutes}:{seconds:02}', True, (0, 0, 0))
+    screen.blit(timer_text, (10, HEIGHT - 40))  # Position at the bottom-left corner
+
     pygame.display.flip()
+    clock.tick(60)
 
-    clock.tick(60)  # Adjust the frame rate as needed
-
-# Quit the game
 pygame.quit()
 sys.exit()

@@ -12,6 +12,9 @@ pygame.display.set_caption("Pulse Pursuit")
 # Load sprite sheet
 sprite_sheet = pygame.image.load("C:\\Users\\Ricky\\Pictures\\sCrkzvs.png")
 
+#Load walk sound
+walk_fast = pygame.mixer.Sound("Walk_fast1.mp3")
+
 # Flashlight parameters
 cone_radius = 100
 cone_height = 100
@@ -119,6 +122,12 @@ while running:
     if dx != 0 and dy != 0:
         dx /= 1.41  # Adjust for diagonal movement to maintain the same speed
         dy /= 1.41
+    
+    # Walking Sound
+    if dx != 0 or dy !=0:
+        pygame.mixer.Sound.play(walk_fast)
+    else:
+        pygame.mixer.Sound.stop(walk_fast)
 
     # Update sprites
     all_sprites.update(dx, dy)

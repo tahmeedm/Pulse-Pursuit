@@ -63,7 +63,7 @@ interactionfont = pygame.font.Font(None, 36)
 # touchables.add(pillbottle)
 
 obstacles = pygame.sprite.Group()
-box = Box(128, 128, (60, 60))
+box = Box(128, 128, (60, 60), screen)
 obstacles.add(box)
 
 # Set up clock

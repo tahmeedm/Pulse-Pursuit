@@ -1,5 +1,9 @@
 import pygame
 
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+
 """
 Obstacles are sprites that obstruct the Player's movement.
 """
@@ -26,9 +30,13 @@ class Chair(Obstacle):
         super().__init__(x, y, "lib/sprites/chair-1.png", size)
         
 class Box(Obstacle):
-    def __init__(self, x, y, size):
+    def __init__(self, x, y, size, screen):
         super().__init__(x, y, "lib/sprites/box-1.png", size)
-        
+
+    def draw(self, screen):
+        self.hitbox = (self.x, self.y, 64, 64)
+        pygame.draw.rect(screen, (255, 0, 0), self.hitbox, 1)
+           
 class Tree(Obstacle):
     def __init__(self, x, y, size):
         super().__init__(x, y, "lib/sprites/tree-1.png", size)

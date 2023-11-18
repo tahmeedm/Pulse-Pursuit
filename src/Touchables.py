@@ -52,19 +52,7 @@ class ClosedDoor(Touchable):
             case "W":
                 self.image = pygame.transform.rotate(self.image, 90)
         
-    def use(self, game_map):
-        room = Room()
-        
-        # Random number generator
-        rand = random.randrange(3)
-        match rand:
-            case 0: # Basement
-                room.set_room_type("Basement")
-            case 1: # Abandoned House
-                room.set_room_type("Abandoned House")                
-            case 2: # Forest
-                room.set_room_type("Forest")
-        
+    def use(self, room, game_map, player):
         # Position of room in game map
         x = self.game_map_pos[0]
         y = self.game_map_pos[1]
@@ -86,8 +74,8 @@ class ClosedDoor(Touchable):
                 room.set_door_states((0, 1, 0, 0))
                 game_map[x][y].set_door_states((0, 0, 0, 1))
                 game_map[x-1][y] = room
-            
-        return room
+        
+        player.enter_room(self.room_pos)
                 
 class OpenedDoor(Touchable):
     def __init__(self, x, y, size, game_map_pos, room_pos):

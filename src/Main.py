@@ -65,7 +65,7 @@ doorTest = ClosedDoor(724 // 2, (600-519)//2, (32, 32), (0, 0), 0)
 touchables.add(doorTest)
 
 obstacles = pygame.sprite.Group()
-box = Box(128, 128, (60, 60), screen)
+box = Box(128, 128, (60, 60))
 obstacles.add(box)
 
 # Set up clock

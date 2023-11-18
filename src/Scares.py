@@ -15,7 +15,7 @@ def Soundspook():
 
 def Choose_Event():
     # Probability weights for each item
-    weights = [0, 0, 1]
+    weights = [0.20, 0.1, 0.70]
 
     rand_value = random.random()
     cumulative_weight = 0

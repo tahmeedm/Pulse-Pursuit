@@ -59,9 +59,10 @@ interaction_range = 50
 interaction_open = False
 
 # Set up prompt
-prompt_text = "Press 'F' to Interact"
+prompt_text = "Press 'F' to Inspect"
 prompt_alpha = 0
-prompt_fade_speed = 5
+prompt_alpha2 = 0
+prompt_fade_speed =  7
 interactionfont = pygame.font.Font(None, 36)
 
 # Set up clock
@@ -176,13 +177,10 @@ while running:
     pygame.draw.rect(screen, (255, 255, 255), white_rect)
 
     # Update prompt alpha based on player's proximity to the closest item
-    closest_item = min(interactable_items,
-                       key=lambda item: pygame.math.Vector2(item.rect.centerx - player.rect.centerx,
-                                                           item.rect.centery - player.rect.centery).length())
-    closest_distance = pygame.math.Vector2(closest_item.rect.centerx - player.rect.centerx,
-                                           closest_item.rect.centery - player.rect.centery).length()
-    prompt_alpha = min(255, prompt_alpha + prompt_fade_speed) if closest_distance < interaction_range else max(0,
-                                                                                                               prompt_alpha - prompt_fade_speed)
+    closest_item = min(interactable_items,key=lambda item: pygame.math.Vector2(item.rect.centerx - player.rect.centerx,item.rect.centery - player.rect.centery).length())
+    closest_distance = pygame.math.Vector2(closest_item.rect.centerx - player.rect.centerx,closest_item.rect.centery - player.rect.centery).length()
+    prompt_alpha = min(255, prompt_alpha + prompt_fade_speed) if closest_distance < interaction_range else max(0,prompt_alpha - prompt_fade_speed)
+    
     # Check for interactions with each item
     for item in pygame.sprite.spritecollide(player, interactable_items, False):
         # Interaction logic
@@ -207,8 +205,7 @@ while running:
     # Draw the peripheral vision
     pygame.draw.ellipse(black_layer, (0, 0, 0, 210), Peripheral_vision(player.rect.center))
     # Draw the flashlight cone
-    pygame.draw.polygon(black_layer, (90, 90, 0, 150), Flashlight_cone(distance, cone_radius, player_angle,
-                                                                      player.rect.center,maxrange))
+    pygame.draw.polygon(black_layer, (90, 90, 0, 150), Flashlight_cone(distance, cone_radius, player_angle,player.rect.center,maxrange))
     # Draw the flashlight circle
     pygame.draw.ellipse(black_layer, (90, 90, 0, 80), Flashlight_circle(distance,mouse_x, mouse_y, cone_radius,player.rect.center,maxrange))
     # Apply Blur effect to shadows
@@ -233,7 +230,9 @@ while running:
     if not interaction_open:
         prompt_surface = interactionfont.render(prompt_text, True, (255, 255, 255))
         prompt_surface.set_alpha(prompt_alpha)
-        screen.blit(prompt_surface, (300, 400))
+        prompt_alpha2 = max(0,prompt_alpha2 - prompt_fade_speed)
+        screen.blit(prompt_surface, (260, 400))
+        
 
     # Draw interaction surface
     if interaction_open:
@@ -251,8 +250,11 @@ while running:
             leverMessage = interactionfont.render('Hold [SPACE] to pull the lever', False, (255, 255, 255))
         else:
             leverMessage = interactionfont.render('This lever seems to be pulled', False, (255, 255, 255))
-        lever_surface.set_alpha(prompt_alpha)
-        leverMessage.set_alpha(prompt_alpha)
+
+        prompt_alpha2 = min(255, prompt_alpha2 + prompt_fade_speed)
+
+        lever_surface.set_alpha(prompt_alpha2)
+        leverMessage.set_alpha(prompt_alpha2)
 
         # Blit lever_surface onto the interaction surface
         screen.blit(lever_surface, (200, 100))

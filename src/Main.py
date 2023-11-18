@@ -114,7 +114,7 @@ world_map = [[None for _ in range(world_map_dimensions)] for _ in range(world_ma
 current_room_position = [world_map_dimensions // 2, world_map_dimensions // 2]
 
 
-room = Room(current_room_position)
+room = Room(list(current_room_position))
 room.set_room_type("Basement")
 
 world_map[current_room_position[0]][current_room_position[1]] = room
@@ -205,12 +205,8 @@ while running:
     if touchable is not None:
         
         if isinstance(touchable, ClosedDoor):
-            room = touchable.use(room, world_map, player)
             
             r = random.randint(1, hard_pity)
-            
-            if (r <= end_room_pity):
-                room.set_room_type("EndRoom")
                 
             direction = touchable.room_pos
             match direction:
@@ -223,8 +219,16 @@ while running:
                 case "W":
                     current_room_position[0] -= 1
             
-            end_room_pity += 1
-             
+            if(world_map[current_room_position[0]][current_room_position[1]] is None):
+                end_room_pity += 1
+                
+            if (r <= end_room_pity and world_map[current_room_position[0]][current_room_position[1]] is None):
+                room = Room(current_room_position)
+                room.set_room_type("EndRoom")
+                player.enter_room(direction)
+            else:
+                room = touchable.use(room, world_map, player)
+                
         elif isinstance(touchable, OpenedDoor):
             room = touchable.use(world_map, player)
             

@@ -30,8 +30,8 @@ class Room:
         self.create_room = {
             "Basement" : self.makeBasement, 
             "AbandonedHouse" : self.makeAbandonedHouse,
-            "Forest" : self.makeForest,
-            "EndRoom" : self.makeEndRoom    
+            "Forest" : self.makeForest,  
+            "EndRoom" : self.makeEndRoom
         }
         self.room_backgrounds = [
             pygame.image.load("lib/sprites/basement walls-1.png"),
@@ -63,6 +63,7 @@ class Room:
     
     def makeEndRoom(self):
         self.makeBasement
+        self.touchables.add(EndGoal(WIDTH // 2 - 25, HEIGHT // 2 - 25, (50, 50)))
     
     def set_room_type(self, room_name = ""):
         room_select = rand.randint(0, len(self.create_room) - 2)

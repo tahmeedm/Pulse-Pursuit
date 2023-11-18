@@ -1,4 +1,5 @@
 import pygame
+import sys
 
 """
 Items that are instantly interacted with when the Player touches it.
@@ -24,7 +25,15 @@ class Spiketrap(Touchable):
         player.slowed = True
         player.slowed_time = remaining_time
         return remaining_time
+
+class EndGoal(Touchable):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, "lib/sprites/goal.png", size)
         
+    def use(self, remaining_time, player):
+        pygame.quit()
+        sys.exit()
+   
 class Pillbottle(Touchable):
     def __init__(self, x, y, size):
         super().__init__(x, y, "lib/sprites/pillbottle-1.png", size)
@@ -142,3 +151,5 @@ class OpenedDoor(Touchable):
                 x -= 1
                
         return game_map[y][x]
+    
+    

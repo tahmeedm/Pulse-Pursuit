@@ -5,7 +5,7 @@ WIDTH, HEIGHT = 800, 600
 PLAYABLE_WIDTH, PLAYABLE_HEIGHT = 724, 519
 
 class Player(pygame.sprite.Sprite):
-    BASE_SPEED = 2.5
+    BASE_SPEED = 7.5
     
     def __init__(self, sprite_sheet_path, initial_x, initial_y):
         super().__init__()

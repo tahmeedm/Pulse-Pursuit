@@ -8,10 +8,10 @@ class Room:
         self.interactables = pygame.sprite.Group()
         self.touchables = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
-        self.room_doors = [ClosedDoor(WIDTH // 2, 32, (32, 32), (0, 0), "N"), 
-                           ClosedDoor(50 + PLAYWIDTH, HEIGHT // 2, (32, 32), (0, 0), "E"), 
-                           ClosedDoor(WIDTH // 2, 50 + PLAYHEIGHT, (32, 32), (0, 0), "S"), 
-                           ClosedDoor(30, HEIGHT // 2, (32, 32), (0, 0), "W")]
+        self.room_doors = [ClosedDoor(WIDTH // 2, 26, (32, 32), (0, 0), "N"), 
+                           ClosedDoor(54 + PLAYWIDTH, HEIGHT // 2, (32, 32), (0, 0), "E"), 
+                           ClosedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), (0, 0), "S"), 
+                           ClosedDoor(24, HEIGHT // 2, (32, 32), (0, 0), "W")]
         self.directional_positions = {
             "N" : (WIDTH // 2, 32),
             "E" : (50 + PLAYWIDTH, HEIGHT // 2),

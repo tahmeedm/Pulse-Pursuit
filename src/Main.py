@@ -61,6 +61,8 @@ spiketrap = Spiketrap(256, 256, (50, 50))
 touchables.add(spiketrap)
 pillbottle = Pillbottle(512, 512, (50, 50))
 touchables.add(pillbottle)
+doorTest = ClosedDoor(724 // 2, (600-519)//2, (32, 32), (0, 0), 0)
+touchables.add(doorTest)
 
 obstacles = pygame.sprite.Group()
 box = Box(128, 128, (60, 60))

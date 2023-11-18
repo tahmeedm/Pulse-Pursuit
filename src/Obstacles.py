@@ -9,6 +9,10 @@ class Obstacle(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(pygame.image.load(image_path).convert_alpha(), size)
         self.rect = self.image.get_rect(center=(x, y))
         
+class BlockedDoor(Obstacle):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, "lib/sprites/lockeddoor-1.png", size)
+        
 class Table(Obstacle):
     def __init__(self, x, y, size):
         super().__init__(x, y, "lib/sprites/table-1.png", size)

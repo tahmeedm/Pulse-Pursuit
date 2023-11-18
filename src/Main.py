@@ -55,11 +55,11 @@ prompt_alpha = 0
 prompt_fade_speed = 5
 interactionfont = pygame.font.Font(None, 36)
 
-touchables = pygame.sprite.Group()
-spiketrap = Spiketrap(256, 256, (50, 50))
-touchables.add(spiketrap)
-pillbottle = Pillbottle(512, 512, (50, 50))
-touchables.add(pillbottle)
+# touchables = pygame.sprite.Group()
+# spiketrap = Spiketrap(256, 256, (50, 50))
+# touchables.add(spiketrap)
+# pillbottle = Pillbottle(512, 512, (50, 50))
+# touchables.add(pillbottle)
 
 # Set up clock
 clock = pygame.time.Clock()
@@ -179,7 +179,7 @@ while running:
         dy /= 1.41
 
     # Check if player touches a Touchable
-    touchable = pygame.sprite.spritecollideany(player, touchables)
+    touchable = pygame.sprite.spritecollideany(player, room.touchables)
     if touchable is not None:
         touchable.use(remaining_time, player)
         touchable.kill()
@@ -206,7 +206,7 @@ while running:
 
     # Draw everything
     player_group.draw(screen)
-    touchables.draw(screen)
+    #touchables.draw(screen)
     
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)

@@ -29,16 +29,17 @@ class Room:
 
     def makeBasement(self):
         self.current_background = self.room_backgrounds[0]
-        self.foreground = self.foreground[0]
-        self.touchables.add(Spiketrap(256, 256, "lib/sprites/spiketrap-1.png", (50, 50)))
+        self.foreground = self.room_foregrounds[0]
+        self.touchables.add(Spiketrap(256, 256, (50, 50)))
+        self.touchables.add(Pillbottle(512, 512, (50, 50)))
     
     def makeAbandonedHouse(self):
         self.current_background = self.room_backgrounds[1]
-        self.foreground = self.foreground[1]
+        self.foreground = self.room_foregrounds[1]
         
     def makeForest(self):
         self.current_background = self.room_backgrounds[2]
-        self.foreground = self.foreground[2]
+        self.foreground = self.room_foregrounds[2]
     
     def set_room_type(self, room_name = "Basement"):
         self.create_room[room_name]()
@@ -51,6 +52,10 @@ class Room:
         # Draw the foreground image on top of the background
         scaled_image = pygame.transform.scale(self.foreground, self.foreground_size)
         self.screen.blit(scaled_image, self.playableArea)
+        
+        self.touchables.draw(self.screen)
+        self.interactables.draw(self.screen)
+        self.obstacles.draw(self.screen)
         
     
         

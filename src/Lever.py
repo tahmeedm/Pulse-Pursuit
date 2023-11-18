@@ -42,7 +42,6 @@ class LeverGameScreen:
         self.lever_angle = 0
         self.lever_mash_count = 0
         self.mashing = False
-        self.key_cooldown = 0
         self.max_allowed_angle = 10
         self.lever_cycles = 0
         self.fixed_in_place = False
@@ -67,9 +66,8 @@ class LeverGameScreen:
     def update(self, input_key=None):
         keys = pygame.key.get_pressed()
 
-        if keys[input_key] and self.key_cooldown == 0 and not self.fixed_in_place:
+        if keys[input_key] and not self.fixed_in_place:
             self.mashing = True
-            self.key_cooldown = 10
         elif not keys[input_key]:
             self.mashing = False
 
@@ -83,7 +81,6 @@ class LeverGameScreen:
 
             if self.lever_mash_count > 40:
                 self.lever_angle = min(self.lever_angle, self.max_allowed_angle)
-                self.key_cooldown = 30
                 self.lever_mash_count = 0
                 self.max_allowed_angle += 10
                 self.play_lever_sound(self.lever_cycles)

@@ -36,6 +36,7 @@ flashlight_shake = pygame.mixer.Sound("lib/sounds/Flashlight_shake1.mp3")
 cone_radius = 150
 cone_height = 100
 player_angle = 0  # Initial angle
+maxrange = 250
 
 prev_mouse_x, prev_mouse_y = pygame.mouse.get_pos()
 acceleration_threshold = 150
@@ -207,9 +208,9 @@ while running:
     pygame.draw.ellipse(black_layer, (0, 0, 0, 210), Peripheral_vision(player.rect.center))
     # Draw the flashlight cone
     pygame.draw.polygon(black_layer, (90, 90, 0, 150), Flashlight_cone(distance, cone_radius, player_angle,
-                                                                      player.rect.center))
+                                                                      player.rect.center,maxrange))
     # Draw the flashlight circle
-    pygame.draw.ellipse(black_layer, (90, 90, 0, 80), Flashlight_circle(mouse_x, mouse_y, cone_radius))
+    pygame.draw.ellipse(black_layer, (90, 90, 0, 80), Flashlight_circle(distance,mouse_x, mouse_y, cone_radius,player.rect.center,maxrange))
     # Apply Blur effect to shadows
     pygame.transform.box_blur(black_layer, 20, repeat_edge_pixels=True, dest_surface=VFXblack_layer)
 

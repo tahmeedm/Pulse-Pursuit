@@ -204,6 +204,7 @@ while running:
         
         if(isinstance(touchable, ClosedDoor)):
             room = Room((current_room_position[0], current_room_position[1]))
+            room.set_room_type()
             direction = touchable.room_pos
             touchable.use(room, world_map, player)
             

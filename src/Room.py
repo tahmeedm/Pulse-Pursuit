@@ -1,13 +1,26 @@
 import pygame
 from Touchables import *
-
+WIDTH, HEIGHT = 800, 600
+PLAYWIDTH, PLAYHEIGHT = 724, 519
 class Room:
     def __init__(self, screen, playableArea, world_map = None):
         self.world_map = world_map
         self.interactables = pygame.sprite.Group()
         self.touchables = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
-        self.room_doors = [ClosedDoorN(), ClosedDoorE(), ClosedDoorS(), ClosedDoorW()]
+        self.room_doors = [ClosedDoor(WIDTH // 2, 32, (32, 32), (0, 0), "N"), 
+                           ClosedDoor(40 + PLAYWIDTH, HEIGHT // 2, (32, 32), (0, 0), "E"), 
+                           ClosedDoor(WIDTH // 2, 40 + PLAYHEIGHT, (32, 32), (0, 0), "S"), 
+                           ClosedDoor(32, HEIGHT // 2 - 16, (32, 32), (0, 0), "W")]
+        self.directional_positions = {
+            "N" : (WIDTH // 2, 32),
+            "E" : (38 + PLAYWIDTH, HEIGHT // 2 - 16),
+            "S" : (WIDTH // 2, 40 + PLAYHEIGHT),
+            "W" : (6, HEIGHT // 2 - 16)
+        }
+        
+        for i in self.room_doors:
+            self.touchables.add(i)
         
         self.playableArea = playableArea
         self.screen = screen
@@ -52,7 +65,20 @@ class Room:
         index = door_states.index(1)
         self.room_doors[index].kill()
         
-        self.room_doors[index] = OpenedDoor()
+        direction = ""
+        match index:
+            case 0:
+                direction = "N"
+            case 1:
+                direction = "E"
+            case 2:
+                direction = "S"
+            case 3:
+                direction = "W"
+        
+        direction_coords = self.directional_positions[direction]
+        
+        self.room_doors[index] = OpenedDoor(direction_coords[0], direction_coords[1], (32, 32), (0, 0), direction)
         self.touchables.add(self.room_doors[index])    
 
     def draw_room(self):

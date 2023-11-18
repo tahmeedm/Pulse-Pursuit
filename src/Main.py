@@ -24,7 +24,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pulse Pursuit")
 
 # Create player instance (passing the path to the sprite sheet)
-player = Player("lib/sprites/player.png", initial_x=350, initial_y=250)
+player = Player("lib/sprites/player.png", initial_x=400, initial_y=300)
 
 #Load sound
 walk_fast = pygame.mixer.Sound("lib/sounds/Walk_fast1.mp3")

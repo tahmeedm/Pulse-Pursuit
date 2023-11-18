@@ -93,7 +93,7 @@ class Room:
         
         direction_coords = self.directional_positions[direction]
         
-        self.room_doors[index] = OpenedDoor(direction_coords[0], direction_coords[1], (32, 32), (0, 0), direction)
+        self.room_doors[index] = OpenedDoor(direction_coords[0], direction_coords[1], (64, 32), self.initial_position, direction)
         self.touchables.add(self.room_doors[index])    
 
     def draw_room(self,  screen, playableArea):

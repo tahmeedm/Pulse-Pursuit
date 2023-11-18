@@ -11,6 +11,7 @@ from Obstacles import *
 import threading
 import time
 import subprocess
+import random
 
 WIDTH, HEIGHT = 800, 600
 
@@ -204,8 +205,15 @@ while running:
     if touchable is not None:
         
         if(isinstance(touchable, ClosedDoor)):
+            
+            r = random.randint(1, hard_pity)
+            
             room = Room((current_room_position[0], current_room_position[1]))
-            room.set_room_type()
+            
+            if (r <= end_room_pity):
+                room.set_room_type("EndRoom")
+            else:
+                room.set_room_type()
             direction = touchable.room_pos
             touchable.use(room, world_map, player)
             

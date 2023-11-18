@@ -25,7 +25,7 @@ class Room:
         ]
         self.current_background = self.room_backgrounds[0]
         self.foreground = self.room_foregrounds[0]
-        self.foreground_size = (700, 500)
+        self.foreground_size = (636, 436)
 
     def makeBasement(self):
         self.current_background = self.room_backgrounds[0]
@@ -43,7 +43,6 @@ class Room:
     
     def set_room_type(self, room_name = "Basement"):
         self.create_room[room_name]()
-        self.draw_room()
 
     def draw_room(self):
         # Draw the current room's background

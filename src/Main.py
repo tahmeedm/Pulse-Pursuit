@@ -98,6 +98,7 @@ timer_duration = 300  # Duration in seconds (5 minutes)
 remaining_time = timer_duration
 
 room = Room(screen, playableArea)
+room.set_room_type()
 
 # Main game loop
 running = True
@@ -186,7 +187,7 @@ while running:
         
     # Clear the screen
     screen.fill((255, 255, 255))
-    room.set_room_type()
+    room.draw_room()
 
     #pygame.draw.rect(screen, (255, 255, 255) , white_rect)
     

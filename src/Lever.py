@@ -108,6 +108,7 @@ class LeverGameScreen:
         self.screen.blit(black_rect, (0, 220))
         self.screen.blit(floor_imgscaled, (0, 40))
         self.screen.blit(self.base_img, (60, 200))
+        pygame.draw.rect(self.screen, (255, 0, 0), (0, 0, 400, 400), 1)
 
     def get_surface(self):
         return self.screen

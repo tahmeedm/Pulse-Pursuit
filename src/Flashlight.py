@@ -16,8 +16,8 @@ def Peripheral_vision(player_center):
 def Flashlight_circle(mouse_x, mouse_y, cone_radius):
     # Draw the ellipse following the flashlight
     ellipse_light = pygame.Rect(
-    mouse_x-50,
-    mouse_y-50,
+    mouse_x-cone_radius/2,
+    mouse_y-cone_radius/2,
     cone_radius,
     cone_radius,
     )
@@ -25,7 +25,7 @@ def Flashlight_circle(mouse_x, mouse_y, cone_radius):
 
 def Flashlight_cone(distance, cone_radius, player_angle, player_center):
      # Calculate cone vertices based on the player's position and angle
-    offset_factor = 0.75 + 0.25 * (1 - min(1, distance / 80))
+    calcdistance = distance-(cone_radius/1.41)
     
     cone_vertices = [
         (
@@ -36,18 +36,18 @@ def Flashlight_cone(distance, cone_radius, player_angle, player_center):
         (
             player_center[0]
             + int(cone_radius * math.cos(player_angle - math.pi / 5))
-            + offset_factor * int(distance * math.cos(player_angle)),
+            + 1 * int(calcdistance * math.cos(player_angle)),
             player_center[1]
             + int(cone_radius * math.sin(player_angle - math.pi / 5))
-            + offset_factor * int(distance * math.sin(player_angle)),
+            + 1 * int(calcdistance * math.sin(player_angle)),
         ),
         (
             player_center[0]
             + int(cone_radius * math.cos(player_angle + math.pi / 5))
-            + offset_factor * int(distance * math.cos(player_angle)),
+            + 1 * int(calcdistance * math.cos(player_angle)),
             player_center[1]
             + int(cone_radius * math.sin(player_angle + math.pi / 5))
-            + offset_factor * int(distance * math.sin(player_angle)),
+            + 1 * int(calcdistance * math.sin(player_angle)),
         )
     ]
     return cone_vertices

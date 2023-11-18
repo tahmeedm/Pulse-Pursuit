@@ -33,7 +33,7 @@ sound_played_walk = bool(0)
 flashlight_shake = pygame.mixer.Sound("lib/sounds/Flashlight_shake1.mp3")
 
 # Flashlight parameters
-cone_radius = 100
+cone_radius = 150
 cone_height = 100
 player_angle = 0  # Initial angle
 
@@ -245,16 +245,8 @@ while running:
         # Use the lever_game instance to get the surface
         lever_surface = lever_games[closest_index].get_surface()
 
-        # Create a rectangle that represents the outline
-        outline_rect = lever_surface.get_rect()
-        outline_rect.inflate_ip(5, 5)  # Adjust the values to change the outline size
-
         # Blit lever_surface onto the interaction surface
         screen.blit(lever_surface, (200, 100))
-
-        # Draw the outline around the lever_surface
-        pygame.draw.rect(interaction_surface, (255, 0, 0), outline_rect, 2)
-
 
     pygame.display.flip()
     clock.tick(60)

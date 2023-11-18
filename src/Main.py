@@ -3,7 +3,7 @@ import sys
 import math
 from Player import *
 from Flashlight import *
-from Rooms import *
+from Room import *
 from Touchables import *
 from Interactables import *
 import threading
@@ -95,7 +95,7 @@ timer_font = pygame.font.SysFont(None, 36)
 timer_duration = 300  # Duration in seconds (5 minutes)
 remaining_time = timer_duration
 
-rooms = Rooms()
+room = Room(screen, playableArea)
 
 # Main game loop
 running = True
@@ -178,7 +178,7 @@ while running:
         
     # Clear the screen
     screen.fill((255, 255, 255))
-    rooms.change_room(screen, playableArea)
+    room.set_room_type()
 
     #pygame.draw.rect(screen, (255, 255, 255) , white_rect)
     

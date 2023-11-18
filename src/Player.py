@@ -1,6 +1,10 @@
 import pygame
+
 WIDTH, HEIGHT = 800, 600
+
 class Player(pygame.sprite.Sprite):
+    BASE_SPEED = 2.5
+    
     def __init__(self, sprite_sheet_path, initial_x, initial_y):
         super().__init__()
 
@@ -36,6 +40,19 @@ class Player(pygame.sprite.Sprite):
 
         # Distance traveled
         self.distance_traveled = 0.0
+        
+        # Player base speed
+        self.player_speed = Player.BASE_SPEED
+        
+        # Slowed condition
+        self.slowed = False
+        self.slow_time = 2
+        self.slowed_time = 0
+        
+        # Hastened condition
+        self.hastened = False
+        self.haste_time = 2
+        self.hastened_time = 0
 
     def update(self, dx=0, dy=0):
         # Update only if there is movement

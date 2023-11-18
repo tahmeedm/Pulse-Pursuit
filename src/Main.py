@@ -4,8 +4,10 @@ import math
 from Player import *
 from Flashlight import *
 from Rooms import *
+from Touchables import *
 from Interactables import *
 from Lever import LeverGameScreen
+from Obstacles import *
 import threading
 import time
 import subprocess
@@ -42,8 +44,8 @@ prev_mouse_x, prev_mouse_y = pygame.mouse.get_pos()
 acceleration_threshold = 150
 
 # Set up sprite group
-all_sprites = pygame.sprite.Group()
-all_sprites.add(player)
+player_group = pygame.sprite.Group()
+player_group.add(player)
 
 # Create item instances
 item1 = InteractableItem(400, 300, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40))  # Replace "item1.png" with the actual image file
@@ -64,6 +66,18 @@ prompt_alpha = 0
 prompt_alpha2 = 0
 prompt_fade_speed =  7
 interactionfont = pygame.font.Font(None, 36)
+
+touchables = pygame.sprite.Group()
+spiketrap = Spiketrap(256, 256, (50, 50))
+touchables.add(spiketrap)
+pillbottle = Pillbottle(512, 512, (50, 50))
+touchables.add(pillbottle)
+doorTest = ClosedDoor(724 // 2, (600-519)//2, (32, 32), (0, 0), 0)
+touchables.add(doorTest)
+
+obstacles = pygame.sprite.Group()
+box = Box(128, 128, (60, 60), screen)
+obstacles.add(box)
 
 # Set up clock
 clock = pygame.time.Clock()
@@ -89,6 +103,7 @@ heart_rate_thread.start()
 start_time = pygame.time.get_ticks()
 timer_font = pygame.font.SysFont(None, 36)
 timer_duration = 300  # Duration in seconds (5 minutes)
+remaining_time = timer_duration
 
 # Calculate the dimensions and position for the white rectangle
 rectangle_width = 700  # Adjust the width as needed
@@ -130,17 +145,29 @@ while running:
 
     # Player movement
     keys = pygame.key.get_pressed()
-    player_speed = 2.5
+    
+    # Check if player is slowed
+    if player.slowed:
+        if remaining_time < player.slowed_time - player.slow_time:
+            player.slowed = not player.slowed
+            player.player_speed = Player.BASE_SPEED
+            
+    # Check if player is hastened
+    if player.hastened:
+        if remaining_time < player.hastened_time - player.haste_time:
+            player.hastened = not player.hastened
+            player.player_speed = Player.BASE_SPEED
+    
     dx, dy = 0, 0
 
-    if keys[pygame.K_LEFT]:
-        dx = -player_speed
-    elif keys[pygame.K_RIGHT]:
-        dx = player_speed
-    if keys[pygame.K_UP]:
-        dy = -player_speed
-    elif keys[pygame.K_DOWN]:
-        dy = player_speed
+    if keys[pygame.K_a]:
+        dx = -player.player_speed
+    elif keys[pygame.K_d]:
+        dx = player.player_speed
+    if keys[pygame.K_w]:
+        dy = -player.player_speed
+    elif keys[pygame.K_s]:
+        dy = player.player_speed
 
     if dx != 0 and dy != 0:
         dx /= 1.41  # Adjust for diagonal movement to maintain the same speed
@@ -169,8 +196,12 @@ while running:
         dx /= 1.41
         dy /= 1.41
 
-    # all_sprites.update(dx, dy)
-
+    # Check if player touches a Touchable
+    touchable = pygame.sprite.spritecollideany(player, touchables)
+    if touchable is not None:
+        touchable.use(remaining_time, player)
+        touchable.kill()
+        
     # Clear the screen
     screen.fill((255, 255, 255))
     rooms.draw_room(screen)
@@ -195,8 +226,10 @@ while running:
     interactable_items.draw(screen)
 
     # Draw everything
-    all_sprites.draw(screen)
-
+    player_group.draw(screen)
+    touchables.draw(screen)
+    obstacles.draw(screen)
+    
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
     black_layer.fill((0, 0, 0, 255))  # Adjust alpha value as needed

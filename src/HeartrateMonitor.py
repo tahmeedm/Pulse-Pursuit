@@ -1,4 +1,3 @@
-
 from sys import argv
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import socket

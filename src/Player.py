@@ -2,6 +2,8 @@ import pygame
 
 WIDTH, HEIGHT = 800, 600
 
+PLAYABLE_WIDTH, PLAYABLE_HEIGHT = 724, 519
+
 class Player(pygame.sprite.Sprite):
     BASE_SPEED = 2.5
     
@@ -94,3 +96,41 @@ class Player(pygame.sprite.Sprite):
             # Update image based on direction and animation index
             self.image = self.frames[self.direction * frames_per_direction + self.index]
 
+    def enter_room(self, door_direction):
+        match door_direction:
+            case "N":
+                self.y = self.y + PLAYABLE_HEIGHT - self.image.get_height()
+                
+                self.rect.x = round(self.x)
+                self.rect.y = round(self.y)
+            
+                self.hitbox.x = round(self.x + 10)
+                self.hitbox.y = round(self.y + 5)
+                
+            case "E":
+                self.x = self.x - PLAYABLE_WIDTH + self.image.get_width()
+                
+                self.rect.x = round(self.x)
+                self.rect.y = round(self.y)
+            
+                self.hitbox.x = round(self.x + 10)
+                self.hitbox.y = round(self.y + 5)
+                
+            case "S":
+                self.y = self.y - PLAYABLE_HEIGHT + self.image.get_height()
+                
+                self.rect.x = round(self.x)
+                self.rect.y = round(self.y)
+            
+                self.hitbox.x = round(self.x + 10)
+                self.hitbox.y = round(self.y + 5)
+                
+            case "W":
+                self.x = self.x + PLAYABLE_WIDTH - self.image.get_width()
+                
+                self.rect.x = round(self.x)
+                self.rect.y = round(self.y)
+            
+                self.hitbox.x = round(self.x + 10)
+                self.hitbox.y = round(self.y + 5)
+                

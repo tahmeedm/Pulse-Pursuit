@@ -97,7 +97,7 @@ clock = pygame.time.Clock()
 elapsed_time_scare = 0
 last_scare = 0
 time_scare_limit = 60
-scare_frequency = 1 #seconds
+scare_frequency = 6 #seconds
 scare_duration = 3
 scare_event = False, 0
 

@@ -43,8 +43,8 @@ def scare():
 
     return [status, index, random_sound_index]
 
-soundlist = [("lib/sounds/Flashlight_shake1.mp3"),
-             ("lib/sounds/Flashlight_shake1.mp3"),
-             ("lib/sounds/Flashlight_shake1.mp3"),
-             ("lib/sounds/Flashlight_shake1.mp3"),
-             ("lib/sounds/Flashlight_shake1.mp3")]
+soundlist = [("lib/sounds/Spooky_sound1.mp3"),
+             ("lib/sounds/Spooky_sound2.mp3"),
+             ("lib/sounds/Spooky_sound3.mp3"),
+             ("lib/sounds/Spooky_sound4.mp3"),
+             ("lib/sounds/Spooky_sound5.mp3")]

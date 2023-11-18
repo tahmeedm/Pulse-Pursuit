@@ -64,18 +64,14 @@ class LeverGameScreen:
             self.levercrank.play(loops=-1)
             self.levercrank_played = True
 
-    def update(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.key_cooldown == 0 and not self.fixed_in_place:
-                self.mashing = True
-                self.key_cooldown = 10
-            elif event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-                self.mashing = False
+    def update(self, input_key=None):
+        keys = pygame.key.get_pressed()
 
-        self.key_cooldown = max(0, self.key_cooldown - 1)
+        if keys[input_key] and self.key_cooldown == 0 and not self.fixed_in_place:
+            self.mashing = True
+            self.key_cooldown = 10
+        elif not keys[input_key]:
+            self.mashing = False
 
         if self.lever_cycles == 8:
             self.fixed_in_place = True
@@ -96,16 +92,22 @@ class LeverGameScreen:
             self.lever_angle = self.final_fixed_angle
 
         self.screen.fill(self.BLACK)
+        # Adjust positioning and scaling for lever
         rotated_lever = pygame.transform.rotate(self.lever_img, self.lever_angle)
-        lever_rect = rotated_lever.get_rect(center=(self.lever_x + self.lever_img.get_width() / 2, self.lever_y + self.lever_img.get_height() / 2))
+        lever_rect = rotated_lever.get_rect(center=(self.WIDTH // 2, self.HEIGHT // 2))
         self.screen.blit(rotated_lever, lever_rect.topleft)
 
-        floor_imgscaled = pygame.transform.scale(self.floor_img, (self.WIDTH, 500))
-        black_rect = pygame.Surface((self.WIDTH, 200))
-        self.screen.blit(black_rect, (0, 420))
-        self.screen.blit(floor_imgscaled, (0, 180))
+        # Adjust positioning for floor
+        floor_imgscaled = pygame.transform.scale(self.floor_img, (self.WIDTH, 400))
+        self.screen.blit(floor_imgscaled, (0, 100))
 
-        self.screen.blit(self.base_img, (260, 400))
+        # Adjust positioning for base
+        self.screen.blit(self.base_img, (self.WIDTH // 2 - self.base_img.get_width() // 2, self.HEIGHT - 40))
+
+        black_rect = pygame.Surface((self.WIDTH, 200))
+        self.screen.blit(black_rect, (0, 220))
+        self.screen.blit(floor_imgscaled, (0, 40))
+        self.screen.blit(self.base_img, (60, 200))
 
     def get_surface(self):
         return self.screen

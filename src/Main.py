@@ -157,12 +157,12 @@ while running:
         if not sound_played_walk:
             sound_played_walk = True
             walk_fast.play(loops=-1)  # Set loops to -1 for infinite looping
-            print(sound_played_walk)
+            # print(sound_played_walk)
     else:
         if sound_played_walk:
             sound_played_walk = False
             walk_fast.fadeout(500)
-            print(sound_played_walk)
+            # print(sound_played_walk)
 
         dx /= 1.41
         dy /= 1.41
@@ -182,7 +182,6 @@ while running:
                                            closest_item.rect.centery - player.rect.centery).length()
     prompt_alpha = min(255, prompt_alpha + prompt_fade_speed) if closest_distance < interaction_range else max(0,
                                                                                                                prompt_alpha - prompt_fade_speed)
-
     # Check for interactions with each item
     for item in pygame.sprite.spritecollide(player, interactable_items, False):
         # Interaction logic
@@ -201,7 +200,7 @@ while running:
 
     # Update each LeverGameScreen instance
     for lever_game in lever_games:
-        lever_game.update()
+        lever_game.update(pygame.K_SPACE)
 
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
@@ -244,8 +243,11 @@ while running:
         interaction_surface = pygame.Surface((400, 400))
         interaction_surface.fill((255, 255, 255))
 
+        # Find the index of the closest item in the interactable_items list
+        closest_index = interactable_items.sprites().index(closest_item)
+
         # Use the lever_game instance to get the surface
-        lever_surface = closest_item.lever_game.get_surface()
+        lever_surface = lever_games[closest_index].get_surface()
 
         # Blit lever_surface onto the interaction surface
         screen.blit(lever_surface, (200, 100))

@@ -4,13 +4,13 @@ import random as rand
 WIDTH, HEIGHT = 800, 600
 PLAYWIDTH, PLAYHEIGHT = 724, 519
 class Room:
-    def __init__(self, screen, playableArea, world_map = None):
+    def __init__(self, screen, playableArea, world_map = None, initial_coords = None):
         self.world_map = world_map
         self.interactables = pygame.sprite.Group()
         self.touchables = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
         
-        initial_position = (len(world_map) // 2, len(world_map) // 2)
+        initial_position = (len(world_map) // 2, len(world_map) // 2) if (initial_coords == None) else initial_coords
         self.room_doors = [
             ClosedDoor(WIDTH // 2, 26, (32, 32), initial_position, "N"), 
             ClosedDoor(54 + PLAYWIDTH, HEIGHT // 2, (32, 32), initial_position, "E"), 
@@ -64,7 +64,7 @@ class Room:
         self.foreground = self.room_foregrounds[2]
     
     def set_room_type(self, room_name = ""):
-        room_select = rand.randint % len(self.create_room)
+        room_select = rand.randint(0, len(self.create_room))
         
         match room_select:
             case 0:

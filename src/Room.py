@@ -4,13 +4,12 @@ import random as rand
 WIDTH, HEIGHT = 800, 600
 PLAYWIDTH, PLAYHEIGHT = 724, 519
 class Room:
-    def __init__(self, screen, playableArea, world_map = None, initial_coords = None):
-        self.world_map = world_map
+    def __init__(self, initial_coords = None):
         self.interactables = pygame.sprite.Group()
         self.touchables = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
         
-        initial_position = (len(world_map) // 2, len(world_map) // 2) if (initial_coords == None) else initial_coords
+        initial_position = initial_coords
         self.room_doors = [
             ClosedDoor(WIDTH // 2, 26, (32, 32), initial_position, "N"), 
             ClosedDoor(54 + PLAYWIDTH, HEIGHT // 2, (32, 32), initial_position, "E"), 
@@ -27,8 +26,6 @@ class Room:
         for i in self.room_doors:
             self.touchables.add(i)
         
-        self.playableArea = playableArea
-        self.screen = screen
         
         self.create_room = {
             "Basement" : self.makeBasement, 
@@ -99,17 +96,17 @@ class Room:
         self.room_doors[index] = OpenedDoor(direction_coords[0], direction_coords[1], (32, 32), (0, 0), direction)
         self.touchables.add(self.room_doors[index])    
 
-    def draw_room(self):
+    def draw_room(self,  screen, playableArea):
         # Draw the current room's background
         self.screen.blit(self.current_background, (0, 0))
         
         # Draw the foreground image on top of the background
         scaled_image = pygame.transform.scale(self.foreground, self.foreground_size)
-        self.screen.blit(scaled_image, self.playableArea)
+        self.screen.blit(scaled_image, playableArea)
         
-        self.touchables.draw(self.screen)
-        self.interactables.draw(self.screen)
-        self.obstacles.draw(self.screen)
+        self.touchables.draw(screen)
+        self.interactables.draw(screen)
+        self.obstacles.draw(screen)
         
     
         

@@ -96,13 +96,18 @@ timer_font = pygame.font.SysFont(None, 36)
 timer_duration = 300  # Duration in seconds (5 minutes)
 remaining_time = timer_duration
 
-world_map_dimensions = 7
+world_map_dimensions = 15
 world_map = [None for _ in range(world_map_dimensions) for _ in range(world_map_dimensions)]
 
-room = Room(screen, playableArea, world_map)
+current_room_position = [world_map_dimensions // 2, world_map_dimensions // 2]
+
+
+room = Room(screen, playableArea, current_room_position)
 room.set_room_type("Basement")
 
-current_room_position = [world_map_dimensions // 2, world_map_dimensions // 2]
+world_map[current_room_position[0]][current_room_position[1]] = room
+
+end_room_pity = 0
 
 # Main game loop
 running = True
@@ -186,11 +191,20 @@ while running:
     # Check if player touches a Touchable
     touchable = pygame.sprite.spritecollideany(player, room.touchables)
     if touchable is not None:
-        touchable.use(remaining_time, player)
+        
+        if(isinstance(touchable, ClosedDoor)):
+            room = Room((current_room_position[0], current_room_position[1]))
+            direction = touchable.room_pos
+            touchable.use(room, world_map, player)
+            
+            end_room_pity += 1
+            
+        else:
+            touchable.use(remaining_time, player)
         touchable.kill()
     
         
-    room.draw_room()
+    room.draw_room(screen, playableArea)
     
     #Check for interactions with each item
     for item in pygame.sprite.spritecollide(player, interactable_items, False):

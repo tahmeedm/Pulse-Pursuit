@@ -108,12 +108,12 @@ timer_duration = 300  # Duration in seconds (5 minutes)
 remaining_time = timer_duration
 
 world_map_dimensions = 15
-world_map = [None for _ in range(world_map_dimensions) for _ in range(world_map_dimensions)]
+world_map = [[None for _ in range(world_map_dimensions)] for _ in range(world_map_dimensions)]
 
 current_room_position = [world_map_dimensions // 2, world_map_dimensions // 2]
 
 
-room = Room(screen, playableArea, current_room_position)
+room = Room(current_room_position)
 room.set_room_type("Basement")
 
 world_map[current_room_position[0]][current_room_position[1]] = room
@@ -216,6 +216,11 @@ while running:
     
         
     room.draw_room(screen, playableArea)
+    
+        # Update prompt alpha based on player's proximity to the closest item
+    closest_item = min(interactable_items, key=lambda item: pygame.math.Vector2(item.rect.centerx - player.rect.centerx, item.rect.centery - player.rect.centery).length())
+    closest_distance = pygame.math.Vector2(closest_item.rect.centerx - player.rect.centerx, closest_item.rect.centery - player.rect.centery).length()
+    prompt_alpha = min(255, prompt_alpha + prompt_fade_speed) if closest_distance < interaction_range else max(0, prompt_alpha - prompt_fade_speed)
     
     #Check for interactions with each item
     for item in pygame.sprite.spritecollide(player, interactable_items, False):

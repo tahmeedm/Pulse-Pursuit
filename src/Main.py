@@ -204,21 +204,31 @@ while running:
     touchable = pygame.sprite.spritecollideany(player, room.touchables)
     if touchable is not None:
         
-        if(isinstance(touchable, ClosedDoor)):
+        if isinstance(touchable, ClosedDoor):
+            room = touchable.use(room, world_map, player)
             
             r = random.randint(1, hard_pity)
             
-            room = Room((current_room_position[0], current_room_position[1]))
-            
             if (r <= end_room_pity):
                 room.set_room_type("EndRoom")
-            else:
-                room.set_room_type()
+                
             direction = touchable.room_pos
-            touchable.use(room, world_map, player)
+            match direction:
+                case "N":
+                    current_room_position[1] -= 1
+                case "E":
+                    current_room_position[0] += 1
+                case "S":
+                    current_room_position[1] += 1
+                case "W":
+                    current_room_position[0] -= 1
             
             end_room_pity += 1
+             
+        elif isinstance(touchable, OpenedDoor):
+            room = touchable.use(world_map, player)
             
+            direction = touchable.room_pos
             match direction:
                 case "N":
                     current_room_position[1] -= 1
@@ -231,8 +241,7 @@ while running:
             
         else:
             touchable.use(remaining_time, player)
-        touchable.kill()
-    
+            touchable.kill()
         
     room.draw_room(screen, playableArea)
     

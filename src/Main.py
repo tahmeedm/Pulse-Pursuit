@@ -64,8 +64,8 @@ interactionfont = pygame.font.Font(None, 36)
 # Set up clock
 clock = pygame.time.Clock()
 
-rectangle_width = 732  # Adjust the width as needed
-rectangle_height = 532  # Adjust the height as needed
+rectangle_width = 722  # Adjust the width as needed
+rectangle_height = 518  # Adjust the height as needed
 
 WIDTH, HEIGHT = 800, 600
 

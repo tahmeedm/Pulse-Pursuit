@@ -108,7 +108,7 @@ timer_font = pygame.font.SysFont(None, 36)
 timer_duration = 300  # Duration in seconds (5 minutes)
 remaining_time = timer_duration
 
-world_map_dimensions = 15
+world_map_dimensions = 69
 world_map = [[None for _ in range(world_map_dimensions)] for _ in range(world_map_dimensions)]
 
 current_room_position = [world_map_dimensions // 2, world_map_dimensions // 2]
@@ -120,6 +120,7 @@ room.set_room_type("Basement")
 world_map[current_room_position[0]][current_room_position[1]] = room
 
 hard_pity = 30
+minimum_pity = 3
 end_room_pity = 0
 
 # Main game loop
@@ -206,7 +207,7 @@ while running:
         
         if isinstance(touchable, ClosedDoor):
             
-            r = random.randint(1, hard_pity)
+            r = random.randint(minimum_pity, hard_pity)
                 
             direction = touchable.room_pos
             match direction:

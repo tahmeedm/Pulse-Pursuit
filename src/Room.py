@@ -1,5 +1,6 @@
 import pygame
 from Touchables import *
+import random as rand
 WIDTH, HEIGHT = 800, 600
 PLAYWIDTH, PLAYHEIGHT = 724, 519
 class Room:
@@ -8,22 +9,27 @@ class Room:
         self.interactables = pygame.sprite.Group()
         self.touchables = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
-        self.room_doors = [ClosedDoor(WIDTH // 2, 26, (32, 32), (0, 0), "N"), 
-                           ClosedDoor(54 + PLAYWIDTH, HEIGHT // 2, (32, 32), (0, 0), "E"), 
-                           ClosedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), (0, 0), "S"), 
-                           ClosedDoor(24, HEIGHT // 2, (32, 32), (0, 0), "W")]
+        
+        initial_position = (len(world_map) // 2, len(world_map) // 2)
+        self.room_doors = [
+            ClosedDoor(WIDTH // 2, 26, (32, 32), initial_position, "N"), 
+            ClosedDoor(54 + PLAYWIDTH, HEIGHT // 2, (32, 32), initial_position, "E"), 
+            ClosedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), initial_position, "S"), 
+            ClosedDoor(24, HEIGHT // 2, (32, 32), initial_position, "W")
+            ]
         self.directional_positions = {
             "N" : (WIDTH // 2, 32),
             "E" : (50 + PLAYWIDTH, HEIGHT // 2),
             "S" : (WIDTH // 2, 50 + PLAYHEIGHT),
             "W" : (30, HEIGHT // 2)
-        }
+            }
         
         for i in self.room_doors:
             self.touchables.add(i)
         
         self.playableArea = playableArea
         self.screen = screen
+        
         self.create_room = {
             "Basement" : self.makeBasement, 
             "AbandonedHouse" : self.makeAbandonedHouse,
@@ -41,7 +47,7 @@ class Room:
         ]
         self.current_background = self.room_backgrounds[0]
         self.foreground = self.room_foregrounds[0]
-        self.foreground_size = (724, 519)
+        self.foreground_size = (PLAYWIDTH, PLAYHEIGHT)
 
     def makeBasement(self):
         self.current_background = self.room_backgrounds[0]
@@ -57,7 +63,20 @@ class Room:
         self.current_background = self.room_backgrounds[2]
         self.foreground = self.room_foregrounds[2]
     
-    def set_room_type(self, room_name = "Basement"):
+    def set_room_type(self, room_name = ""):
+        room_select = rand.randint % len(self.create_room)
+        
+        match room_select:
+            case 0:
+                room_select = "Basement"
+            case 1:
+                room_select = "AbandonedHouse"
+            case 2:
+                room_select = "Forest"
+
+        if (room_name == ""):
+            room_name = room_select
+        
         self.create_room[room_name]()
         
     def set_door_states(self, door_states = (0, 0, 0, 0)):

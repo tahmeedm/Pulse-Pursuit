@@ -96,11 +96,13 @@ timer_font = pygame.font.SysFont(None, 36)
 timer_duration = 300  # Duration in seconds (5 minutes)
 remaining_time = timer_duration
 
-room = Room(screen, playableArea)
-room.set_room_type("Forest")
-
 world_map_dimensions = 7
 world_map = [None for _ in range(world_map_dimensions) for _ in range(world_map_dimensions)]
+
+room = Room(screen, playableArea, world_map)
+room.set_room_type("Basement")
+
+current_room_position = [world_map_dimensions // 2, world_map_dimensions // 2]
 
 # Main game loop
 running = True
@@ -186,9 +188,8 @@ while running:
     if touchable is not None:
         touchable.use(remaining_time, player)
         touchable.kill()
+    
         
-    # Clear the screen
-    screen.fill((255, 255, 255))
     room.draw_room()
     
     #Check for interactions with each item

@@ -98,11 +98,11 @@ class Room:
 
     def draw_room(self,  screen, playableArea):
         # Draw the current room's background
-        self.screen.blit(self.current_background, (0, 0))
+        screen.blit(self.current_background, (0, 0))
         
         # Draw the foreground image on top of the background
         scaled_image = pygame.transform.scale(self.foreground, self.foreground_size)
-        self.screen.blit(scaled_image, playableArea)
+        screen.blit(scaled_image, playableArea)
         
         self.touchables.draw(screen)
         self.interactables.draw(screen)

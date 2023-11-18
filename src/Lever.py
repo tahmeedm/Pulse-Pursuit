@@ -19,8 +19,8 @@ class LeverGameScreen:
 
         # Load images and sounds
         self.lever_img = pygame.image.load("lib/sprites/Leverrod.png")
-        self.base_img = pygame.image.load("C:lib/sprites/Leverbase.png")
-        self.floor_img = pygame.image.load("C:lib/sprites/Floor.png")
+        self.base_img = pygame.image.load("lib/sprites/Leverbase.png")
+        self.floor_img = pygame.image.load("lib/sprites/Floor.png")
         self.rustylever1 = pygame.mixer.Sound("lib/sounds/rustylever1.mp3")
         self.rustylever2 = pygame.mixer.Sound("lib/sounds/rustylever2.mp3")
         self.leversound = pygame.mixer.Sound("lib/sounds/Leverclick.mp3")

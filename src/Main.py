@@ -6,6 +6,7 @@ from Flashlight import *
 from Rooms import *
 from Touchables import *
 from Interactables import *
+from Obstacles import *
 import threading
 import time
 import subprocess
@@ -60,6 +61,10 @@ spiketrap = Spiketrap(256, 256, (50, 50))
 touchables.add(spiketrap)
 pillbottle = Pillbottle(512, 512, (50, 50))
 touchables.add(pillbottle)
+
+obstacles = pygame.sprite.Group()
+box = Box(128, 128, (60, 60))
+obstacles.add(box)
 
 # Set up clock
 clock = pygame.time.Clock()
@@ -207,6 +212,7 @@ while running:
     # Draw everything
     player_group.draw(screen)
     touchables.draw(screen)
+    obstacles.draw(screen)
     
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)

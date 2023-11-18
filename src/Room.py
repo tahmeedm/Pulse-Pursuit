@@ -17,10 +17,10 @@ class Room:
             ClosedDoor(24, HEIGHT // 2, (32, 32), self.initial_position, "W")
             ]
         self.directional_positions = {
-            "N" : (WIDTH // 2, 32),
-            "E" : (50 + PLAYWIDTH, HEIGHT // 2),
-            "S" : (WIDTH // 2, 50 + PLAYHEIGHT),
-            "W" : (30, HEIGHT // 2)
+            "N" : (WIDTH // 2 - 2, 32),
+            "E" : (64 + PLAYWIDTH, HEIGHT // 2),
+            "S" : (WIDTH // 2 + 4, 50 + PLAYHEIGHT),
+            "W" : (44, HEIGHT // 2)
             }
         
         for i in self.room_doors:

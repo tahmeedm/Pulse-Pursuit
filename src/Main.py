@@ -191,16 +191,12 @@ while running:
 
         if closest_distance > interaction_range:
             interaction_open = False
-
+                
     # Draw interactable items
     interactable_items.draw(screen)
 
     # Draw everything
     all_sprites.draw(screen)
-
-    # Update each LeverGameScreen instance
-    for lever_game in lever_games:
-        lever_game.update(pygame.K_SPACE)
 
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
@@ -241,16 +237,24 @@ while running:
     # Draw interaction surface
     if interaction_open:
         interaction_surface = pygame.Surface((400, 400))
-        interaction_surface.fill((255, 255, 255))
 
         # Find the index of the closest item in the interactable_items list
         closest_index = interactable_items.sprites().index(closest_item)
+        lever_games[closest_index].update(pygame.K_SPACE)
 
         # Use the lever_game instance to get the surface
         lever_surface = lever_games[closest_index].get_surface()
 
+        # Create a rectangle that represents the outline
+        outline_rect = lever_surface.get_rect()
+        outline_rect.inflate_ip(5, 5)  # Adjust the values to change the outline size
+
         # Blit lever_surface onto the interaction surface
         screen.blit(lever_surface, (200, 100))
+
+        # Draw the outline around the lever_surface
+        pygame.draw.rect(interaction_surface, (255, 0, 0), outline_rect, 2)
+
 
     pygame.display.flip()
     clock.tick(60)

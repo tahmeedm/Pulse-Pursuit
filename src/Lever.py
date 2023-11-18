@@ -12,7 +12,7 @@ class LeverGameScreen:
         self.lever_speed = 0.1
 
         # Colors
-        self.WHITE = (255, 255, 255)
+        self.WHITE = (240, 240, 240)
         self.BLACK = (0, 0, 0)
 
         # Set up the screen

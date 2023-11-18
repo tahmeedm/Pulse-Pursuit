@@ -1,6 +1,4 @@
 import pygame
-import sys
-
 class LeverGameScreen:
     def __init__(self, width, height):
         # Initialize Pygame

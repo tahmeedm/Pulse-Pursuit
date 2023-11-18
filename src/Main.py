@@ -6,6 +6,7 @@ from Flashlight import *
 from Room import *
 from Touchables import *
 from Interactables import *
+from Obstacles import *
 import threading
 import time
 import subprocess
@@ -60,6 +61,10 @@ interactionfont = pygame.font.Font(None, 36)
 # touchables.add(spiketrap)
 # pillbottle = Pillbottle(512, 512, (50, 50))
 # touchables.add(pillbottle)
+
+obstacles = pygame.sprite.Group()
+box = Box(128, 128, (60, 60))
+obstacles.add(box)
 
 # Set up clock
 clock = pygame.time.Clock()

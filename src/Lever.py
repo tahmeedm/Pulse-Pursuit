@@ -33,7 +33,7 @@ class LeverGameScreen:
         self.cycle2_played = False
         self.leversound_played = False
         self.levercrank_played = False
-       
+        
         # Initial positions
         self.lever_x = self.WIDTH // 2 - self.lever_img.get_width() // 2
         self.lever_y = self.HEIGHT // 2 - 40
@@ -46,6 +46,10 @@ class LeverGameScreen:
         self.lever_cycles = 0
         self.fixed_in_place = False
         self.final_fixed_angle = 0
+        self.global_variable = False
+
+    def set_global_variable(self, value):
+         self.global_variable = value
 
     def play_lever_sound(self, cycle):
         if cycle == 0 and not self.cycle1_played:
@@ -70,6 +74,9 @@ class LeverGameScreen:
             self.mashing = True
         elif not keys[input_key]:
             self.mashing = False
+
+        if self.lever_cycles == 8 and not self.get_global_variable():
+            self.set_global_variable(True)
 
         if self.lever_cycles == 8:
             self.fixed_in_place = True
@@ -108,4 +115,8 @@ class LeverGameScreen:
         pygame.draw.rect(self.screen, (255, 0, 0), (0, 0, 400, 400), 1)
 
     def get_surface(self):
-        return self.screen
+         return self.screen
+    
+    def get_global_variable(self):
+        return self.global_variable
+

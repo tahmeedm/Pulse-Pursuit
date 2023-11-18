@@ -1,1 +1,1 @@
-lever_games[closest_index].update(pygame.K_SPACE)
+ 

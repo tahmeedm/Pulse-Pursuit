@@ -245,9 +245,18 @@ while running:
 
         # Use the lever_game instance to get the surface
         lever_surface = lever_games[closest_index].get_surface()
+        lever_status = lever_games[closest_index].get_global_variable()
+
+        if lever_status == False:
+            leverMessage = interactionfont.render('Hold [SPACE] to pull the lever', False, (255, 255, 255))
+        else:
+            leverMessage = interactionfont.render('This lever seems to be pulled', False, (255, 255, 255))
+        lever_surface.set_alpha(prompt_alpha)
+        leverMessage.set_alpha(prompt_alpha)
 
         # Blit lever_surface onto the interaction surface
         screen.blit(lever_surface, (200, 100))
+        screen.blit(leverMessage, (225,450))
 
     pygame.display.flip()
     clock.tick(60)

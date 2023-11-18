@@ -56,12 +56,6 @@ prompt_alpha = 0
 prompt_fade_speed = 5
 interactionfont = pygame.font.Font(None, 36)
 
-# touchables = pygame.sprite.Group()
-# spiketrap = Spiketrap(256, 256, (50, 50))
-# touchables.add(spiketrap)
-# pillbottle = Pillbottle(512, 512, (50, 50))
-# touchables.add(pillbottle)
-
 obstacles = pygame.sprite.Group()
 box = Box(128, 128, (60, 60), screen)
 obstacles.add(box)
@@ -103,7 +97,10 @@ timer_duration = 300  # Duration in seconds (5 minutes)
 remaining_time = timer_duration
 
 room = Room(screen, playableArea)
-room.set_room_type("AbandonedHouse")
+room.set_room_type("Forest")
+
+world_map_dimensions = 7
+world_map = [None for _ in range(world_map_dimensions) for _ in range(world_map_dimensions)]
 
 # Main game loop
 running = True
@@ -193,8 +190,6 @@ while running:
     # Clear the screen
     screen.fill((255, 255, 255))
     room.draw_room()
-
-    #pygame.draw.rect(screen, (255, 255, 255) , white_rect)
     
     #Check for interactions with each item
     for item in pygame.sprite.spritecollide(player, interactable_items, False):
@@ -226,7 +221,7 @@ while running:
     # Draw the flashlight circle
     pygame.draw.ellipse(black_layer, (90, 90, 0, 80), Flashlight_circle(mouse_x, mouse_y, cone_radius))
     # Apply Blur effect to shadows
-    #pygame.transform.box_blur(black_layer, 20, repeat_edge_pixels=True, dest_surface=VFXblack_layer)
+    pygame.transform.box_blur(black_layer, 20, repeat_edge_pixels=True, dest_surface=VFXblack_layer)
 
     # Blit the black layer onto the screen
     screen.blit(VFXblack_layer, (0, 0))

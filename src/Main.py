@@ -118,6 +118,7 @@ room.set_room_type("Basement")
 
 world_map[current_room_position[0]][current_room_position[1]] = room
 
+hard_pity = 30
 end_room_pity = 0
 
 # Main game loop
@@ -210,6 +211,16 @@ while running:
             
             end_room_pity += 1
             
+            match direction:
+                case "N":
+                    current_room_position[1] -= 1
+                case "E":
+                    current_room_position[0] += 1
+                case "S":
+                    current_room_position[1] += 1
+                case "W":
+                    current_room_position[0] -= 1
+            
         else:
             touchable.use(remaining_time, player)
         touchable.kill()
@@ -251,7 +262,7 @@ while running:
     # Draw the flashlight circle
     pygame.draw.ellipse(black_layer, (90, 90, 0, 80), Flashlight_circle(distance,mouse_x, mouse_y, cone_radius,player.rect.center,maxrange))
     # Apply Blur effect to shadows
-    pygame.transform.box_blur(black_layer, 20, repeat_edge_pixels=True, dest_surface=VFXblack_layer)
+    #pygame.transform.box_blur(black_layer, 20, repeat_edge_pixels=True, dest_surface=VFXblack_layer)
 
     # Blit the black layer onto the screen
     screen.blit(VFXblack_layer, (0, 0))

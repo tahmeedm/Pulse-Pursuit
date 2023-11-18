@@ -9,12 +9,12 @@ class Room:
         self.touchables = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
         
-        initial_position = initial_coords
+        self.initial_position = initial_coords
         self.room_doors = [
-            ClosedDoor(WIDTH // 2, 26, (32, 32), initial_position, "N"), 
-            ClosedDoor(54 + PLAYWIDTH, HEIGHT // 2, (32, 32), initial_position, "E"), 
-            ClosedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), initial_position, "S"), 
-            ClosedDoor(24, HEIGHT // 2, (32, 32), initial_position, "W")
+            ClosedDoor(WIDTH // 2, 26, (32, 32), self.initial_position, "N"), 
+            ClosedDoor(54 + PLAYWIDTH, HEIGHT // 2, (32, 32), self.initial_position, "E"), 
+            ClosedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), self.initial_position, "S"), 
+            ClosedDoor(24, HEIGHT // 2, (32, 32), self.initial_position, "W")
             ]
         self.directional_positions = {
             "N" : (WIDTH // 2, 32),
@@ -61,7 +61,7 @@ class Room:
         self.foreground = self.room_foregrounds[2]
     
     def set_room_type(self, room_name = ""):
-        room_select = rand.randint(0, len(self.create_room))
+        room_select = rand.randint(0, len(self.create_room) - 1)
         
         match room_select:
             case 0:

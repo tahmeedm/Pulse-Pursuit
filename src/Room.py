@@ -9,14 +9,14 @@ class Room:
         self.touchables = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
         self.room_doors = [ClosedDoor(WIDTH // 2, 32, (32, 32), (0, 0), "N"), 
-                           ClosedDoor(40 + PLAYWIDTH, HEIGHT // 2, (32, 32), (0, 0), "E"), 
-                           ClosedDoor(WIDTH // 2, 40 + PLAYHEIGHT, (32, 32), (0, 0), "S"), 
-                           ClosedDoor(32, HEIGHT // 2 - 16, (32, 32), (0, 0), "W")]
+                           ClosedDoor(50 + PLAYWIDTH, HEIGHT // 2, (32, 32), (0, 0), "E"), 
+                           ClosedDoor(WIDTH // 2, 50 + PLAYHEIGHT, (32, 32), (0, 0), "S"), 
+                           ClosedDoor(30, HEIGHT // 2, (32, 32), (0, 0), "W")]
         self.directional_positions = {
             "N" : (WIDTH // 2, 32),
-            "E" : (38 + PLAYWIDTH, HEIGHT // 2 - 16),
-            "S" : (WIDTH // 2, 40 + PLAYHEIGHT),
-            "W" : (6, HEIGHT // 2 - 16)
+            "E" : (50 + PLAYWIDTH, HEIGHT // 2),
+            "S" : (WIDTH // 2, 50 + PLAYHEIGHT),
+            "W" : (30, HEIGHT // 2)
         }
         
         for i in self.room_doors:

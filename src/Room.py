@@ -15,7 +15,7 @@ class Room:
             "Forest" : self.makeForest    
         }
         self.room_backgrounds = [
-            pygame.image.load("lib/sprites/bg1.jpg"),
+            pygame.image.load("lib/sprites/basement walls-1.png"),
             
             # Add more backgrounds as needed
         ]
@@ -25,7 +25,7 @@ class Room:
         ]
         self.current_background = self.room_backgrounds[0]
         self.foreground = self.room_foregrounds[0]
-        self.foreground_size = (636, 436)
+        self.foreground_size = (732, 532)
 
     def makeBasement(self):
         self.current_background = self.room_backgrounds[0]

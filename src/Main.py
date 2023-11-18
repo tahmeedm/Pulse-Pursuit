@@ -98,7 +98,7 @@ timer_duration = 300  # Duration in seconds (5 minutes)
 remaining_time = timer_duration
 
 room = Room(screen, playableArea)
-room.set_room_type()
+room.set_room_type("AbandonedHouse")
 
 # Main game loop
 running = True

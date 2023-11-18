@@ -16,11 +16,13 @@ class Room:
         }
         self.room_backgrounds = [
             pygame.image.load("lib/sprites/basement walls-1.png"),
+            pygame.image.load("lib/sprites/abandonedhousewalls-1.png")
             
             # Add more backgrounds as needed
         ]
         self.room_foregrounds = [
              pygame.image.load("lib/sprites/foreground.jpg"),
+             pygame.image.load("lib/sprites/foreground2.png")
              
         ]
         self.current_background = self.room_backgrounds[0]

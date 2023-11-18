@@ -2,11 +2,13 @@ import pygame
 from Touchables import *
 
 class Room:
-    def __init__(self, screen, playableArea):
-        self.current_room = 0
+    def __init__(self, screen, playableArea, world_map = None):
+        self.world_map = world_map
         self.interactables = pygame.sprite.Group()
         self.touchables = pygame.sprite.Group()
         self.obstacles = pygame.sprite.Group()
+        self.room_doors = [ClosedDoorN(), ClosedDoorE(), ClosedDoorS(), ClosedDoorW()]
+        
         self.playableArea = playableArea
         self.screen = screen
         self.create_room = {
@@ -45,6 +47,13 @@ class Room:
     
     def set_room_type(self, room_name = "Basement"):
         self.create_room[room_name]()
+        
+    def set_door_states(self, door_states = (0, 0, 0, 0)):
+        index = door_states.index(1)
+        self.room_doors[index].kill()
+        
+        self.room_doors[index] = OpenedDoor()
+        self.touchables.add(self.room_doors[index])    
 
     def draw_room(self):
         # Draw the current room's background

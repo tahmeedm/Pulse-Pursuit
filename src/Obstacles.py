@@ -8,6 +8,7 @@ class Obstacle(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.transform.scale(pygame.image.load(image_path).convert_alpha(), size)
         self.rect = self.image.get_rect(center=(x, y))
+        self.mask = pygame.mask.from_surface(self.image)
         
 class BlockedDoor(Obstacle):
     def __init__(self, x, y, size):
@@ -26,7 +27,7 @@ class Chair(Obstacle):
         super().__init__(x, y, "lib/sprites/chair-1.png", size)
         
 class Box(Obstacle):
-    def __init__(self, x, y, size, screen):
+    def __init__(self, x, y, size):
         super().__init__(x, y, "lib/sprites/box-1.png", size)
            
 class Tree(Obstacle):

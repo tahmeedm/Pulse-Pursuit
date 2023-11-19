@@ -75,9 +75,8 @@ touchables.add(pillbottle)
 doorTest = ClosedDoor(724 // 2, (600-519)//2, (32, 32), (0, 0), 0)
 touchables.add(doorTest)
 
-obstacles = pygame.sprite.Group()
-box = Box(128, 128, (60, 60), screen)
-obstacles.add(box)
+obstacle_group = pygame.sprite.Group()
+
 
 # Set up clock
 clock = pygame.time.Clock()
@@ -177,10 +176,16 @@ while running:
     new_hitbox_x = player.hitbox.x + dx
     new_hitbox_y = player.hitbox.y + dy
 
-    if white_rect.contains(pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)):
+    # Create a new rect for the hitbox at the new position
+    new_hitbox = pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)
+
+    # Check if the new hitbox would collide with any obstacles
+    collide = any(new_hitbox.colliderect(obstacle.rect) for obstacle in obstacle_group)
+
+    if white_rect.contains(pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)) and not collide:
         # If within bounds, update the player's position and hitbox
         player.update(dx, dy)
-        player.hitbox.move(dx, dy)
+        player.hitbox.move(dx, dy)   
 
     if dx != 0 or dy != 0:
         if not sound_played_walk:
@@ -200,7 +205,7 @@ while running:
     touchable = pygame.sprite.spritecollideany(player, touchables)
     if touchable is not None:
         touchable.use(remaining_time, player)
-        touchable.kill()
+        touchable.kill()        
         
     # Clear the screen
     screen.fill((255, 255, 255))
@@ -228,7 +233,7 @@ while running:
     # Draw everything
     player_group.draw(screen)
     touchables.draw(screen)
-    obstacles.draw(screen)
+    obstacle_group.draw(screen)
     
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)

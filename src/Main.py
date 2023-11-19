@@ -9,6 +9,7 @@ from Interactables import *
 from Lever import LeverGameScreen
 from Obstacles import *
 from Scares import *
+from Intro import run_intro
 import threading
 import time
 import subprocess
@@ -23,6 +24,11 @@ pygame.init()
 # Set up display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_mode((WIDTH, HEIGHT))
+
+#Set up audio for dead screen
+spooky_sound = pygame.mixer.Sound("lib/sounds/Spooky_sound4.mp3")
+spooky_sound2 = pygame.mixer.Sound("lib/sounds/Spooky_sound1.mp3")
+
 
 # Create a list to store LeverGameScreen instances for each interactable
 lever_games = [LeverGameScreen(400, 400) for _ in range(2)]  # Adjust the range based on the number of interactable items
@@ -140,6 +146,12 @@ hard_pity = 30
 minimum_pity = 3
 end_room_pity = 0
 
+
+distance_monster = 5
+tickCount = 0
+run_intro(WIDTH, HEIGHT, screen)
+
+
 # Main game loop
 running = True
 font = pygame.font.SysFont(None, 36)
@@ -158,7 +170,6 @@ while running:
     speed = mousedelta.length()
 
     if speed > acceleration_threshold:
-        # print(f"Mouse Accelerated: {speed}") #prints out speed when high acceleration is detected
         mouse_anxiety +=0.65
         flashlight_shake.play()
         flashlight_shake.fadeout(500)
@@ -244,6 +255,7 @@ while running:
             
             if(world_map[current_room_position[0]][current_room_position[1]] is None):
                 end_room_pity += 1
+                distance_monster += 1
                 
             if (r <= end_room_pity and world_map[current_room_position[0]][current_room_position[1]] is None):
                 room = Room(current_room_position)
@@ -350,6 +362,50 @@ while running:
         # Call the scare function with the screen, duration, player center, and elapsed time
         scare_event = scare()
 
+    
+    if (tickCount >= 300):
+        distance_monster -= 1
+        tickCount = 0
+        
+    if (remaining_time == 0):
+        distance_monster = 0
+    
+    print(distance_monster)
+    
+    if (distance_monster == 1):
+        spooky_sound2.play()
+
+        # Create a red hue effect
+        
+        red_hue = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        red_hue.fill((255, 0, 0, 50))  # Red color with alpha for transparency
+        screen.blit(red_hue, (0, 0))
+        pygame.display.flip()
+
+
+
+    if (distance_monster == 0):
+        running = False  # Stop the main game loop
+        screen.fill((0, 0, 0))  # Fill the screen with black
+
+        # Display "You Died" message
+        died_font = pygame.font.SysFont('Times New Roman', 72)
+        died_text = died_font.render('You Died', True, (255, 0, 0))  # Red text
+        text_rect = died_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        screen.blit(died_text, text_rect)
+
+       
+        spooky_sound.play()
+
+        pygame.display.flip()  # Update the display
+        pygame.time.wait(5000)  # Wait for 5 seconds
+        pygame.quit()
+        sys.exit()
+    
+        
+    tickCount += 1   
+
+        
     # Draw interaction prompt
     if not interaction_open:
         prompt_surface = interactionfont.render(prompt_text, True, (255, 255, 255))
@@ -422,6 +478,8 @@ while running:
         spooksound_status = False
         scare_event[0] = False
 
+    
+    
     pygame.display.flip()
     clock.tick(60)
 

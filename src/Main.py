@@ -359,8 +359,7 @@ while running:
         # Call the scare function with the screen, duration, player center, and elapsed time
         scare_event = scare()
 
-<<<<<<< Updated upstream
-=======
+
     #Heart Rate Stuff
     if (heartTickCount >= 20):
         heartTickCount = 0
@@ -431,7 +430,7 @@ while running:
     tickCount += 1   
 
         
->>>>>>> Stashed changes
+
     # Draw interaction prompt
     if not interaction_open:
         prompt_surface = interactionfont.render(prompt_text, True, (255, 255, 255))

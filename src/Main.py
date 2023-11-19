@@ -26,6 +26,8 @@ pygame.display.set_mode((WIDTH, HEIGHT))
 
 #Set up audio for dead screen
 spooky_sound = pygame.mixer.Sound("lib/sounds/Spooky_sound4.mp3")
+spooky_sound2 = pygame.mixer.Sound("lib/sounds/Spooky_sound1.mp3")
+
 
 # Create a list to store LeverGameScreen instances for each interactable
 lever_games = [LeverGameScreen(400, 400) for _ in range(2)]  # Adjust the range based on the number of interactable items
@@ -357,7 +359,7 @@ while running:
         scare_event = scare()
 
     
-    if (tickCount >= 110):
+    if (tickCount >= 300):
         distance_monster -= 1
         tickCount = 0
         
@@ -366,6 +368,18 @@ while running:
     
     print(distance_monster)
     
+    if (distance_monster == 1):
+        spooky_sound2.play()
+
+        # Create a red hue effect
+        
+        red_hue = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        red_hue.fill((255, 0, 0, 50))  # Red color with alpha for transparency
+        screen.blit(red_hue, (0, 0))
+        pygame.display.flip()
+
+
+
     if (distance_monster == 0):
         running = False  # Stop the main game loop
         screen.fill((0, 0, 0))  # Fill the screen with black

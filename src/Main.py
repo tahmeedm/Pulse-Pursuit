@@ -24,6 +24,9 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_mode((WIDTH, HEIGHT))
 
+#Set up audio for dead screen
+spooky_sound = pygame.mixer.Sound("lib/sounds/Spooky_sound4.mp3")
+
 # Create a list to store LeverGameScreen instances for each interactable
 lever_games = [LeverGameScreen(400, 400) for _ in range(2)]  # Adjust the range based on the number of interactable items
 pygame.display.set_caption("Pulse Pursuit")
@@ -362,7 +365,22 @@ while running:
         distance_monster = 0
     
     if (distance_monster == 0):
-        pass
+        running = False  # Stop the main game loop
+        screen.fill((0, 0, 0))  # Fill the screen with black
+
+        # Display "You Died" message
+        died_font = pygame.font.SysFont('Times New Roman', 72)
+        died_text = died_font.render('You Died', True, (255, 0, 0))  # Red text
+        text_rect = died_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        screen.blit(died_text, text_rect)
+
+       
+        spooky_sound.play()
+
+        pygame.display.flip()  # Update the display
+        pygame.time.wait(5000)  # Wait for 5 seconds
+        pygame.quit()
+        sys.exit()
     
         
     tickCount += 1   

@@ -54,7 +54,8 @@ orbit_speed = 0.01
 spooksound_status = False
 
 prev_mouse_x, prev_mouse_y = pygame.mouse.get_pos()
-acceleration_threshold = 150
+acceleration_threshold = 115
+mouse_anxiety = 0.15
 
 # Set up sprite group
 player_group = pygame.sprite.Group()
@@ -97,7 +98,7 @@ clock = pygame.time.Clock()
 elapsed_time_scare = 0
 last_scare = 0
 time_scare_limit = 60
-scare_frequency = 50 #seconds
+scare_frequency = 20 #default is 20 seconds
 scare_duration = 3
 scare_event = False, 0
 
@@ -156,8 +157,10 @@ while running:
 
     if speed > acceleration_threshold:
         # print(f"Mouse Accelerated: {speed}") #prints out speed when high acceleration is detected
+        mouse_anxiety +=0.65
         flashlight_shake.play()
         flashlight_shake.fadeout(500)
+    print(mouse_anxiety)
 
     prev_mouse_x = mouse_x
     prev_mouse_y = mouse_y
@@ -295,7 +298,7 @@ while running:
     elapsed_time_scare = elapsed_time - last_scare
 
     if((elapsed_time_scare/time_scare_limit)<1):
-        chance_of_scare = (2.718**((int(heart_rate)-60)/25)/600)/scare_frequency
+        chance_of_scare = ((2.718**((int(heart_rate)-60)/25)/600)/scare_frequency)*(2.718**(-1/mouse_anxiety))*(2)
     else:
         chance_of_scare = 1
 

@@ -30,6 +30,7 @@ def Choose_Event():
 
 def scare():
     index = Choose_Event()
+    random_sound_index = None  # Initialize the variable here
 
     if index == 0:
         status = Flashlightfail()

@@ -9,6 +9,7 @@ from Interactables import *
 from Lever import LeverGameScreen
 from Obstacles import *
 from Scares import *
+from Intro import run_intro
 import threading
 import time
 import subprocess
@@ -139,6 +140,8 @@ world_map[current_room_position[0]][current_room_position[1]] = room
 hard_pity = 30
 minimum_pity = 3
 end_room_pity = 0
+
+run_intro(WIDTH, HEIGHT, screen)
 
 # Main game loop
 running = True

@@ -1,13 +1,16 @@
 import pygame
 from Touchables import *
+from Obstacles import *
 import random as rand
+
 WIDTH, HEIGHT = 800, 600
 PLAYWIDTH, PLAYHEIGHT = 724, 519
+
 class Room:
     def __init__(self, initial_coords = None):
         self.interactables = pygame.sprite.Group()
         self.touchables = pygame.sprite.Group()
-        self.obstacles = pygame.sprite.Group()
+        self.obstacle_group = pygame.sprite.Group()
         
         self.initial_position = initial_coords
         self.room_doors = [
@@ -52,6 +55,7 @@ class Room:
         self.foreground = self.room_foregrounds[0]
         self.touchables.add(Spiketrap(256, 256, (50, 50)))
         self.touchables.add(Pillbottle(512, 512, (50, 50)))
+        self.obstacle_group.add(Box(128, 128, (100, 100)))
     
     def makeAbandonedHouse(self):
         self.current_background = self.room_backgrounds[1]
@@ -63,7 +67,12 @@ class Room:
     
     def makeEndRoom(self):
         self.makeBasement
+        self.touchables.empty()
         self.touchables.add(EndGoal(WIDTH // 2 - 25, HEIGHT // 2 - 25, (50, 50)))
+        self.obstacles.add(BlockedDoor(WIDTH // 2, 26, (32, 32), "N"))
+        self.obstacles.add(BlockedDoor(54 + PLAYWIDTH, HEIGHT // 2, (32, 32), "E"))
+        self.obstacles.add(BlockedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), "S"))
+        self.obstacles.add(BlockedDoor(24, HEIGHT // 2, (32, 32), "W"))
     
     def set_room_type(self, room_name = ""):
         room_select = rand.randint(0, len(self.create_room) - 2)
@@ -111,7 +120,7 @@ class Room:
         
         self.touchables.draw(screen)
         self.interactables.draw(screen)
-        self.obstacles.draw(screen)
+        self.obstacle_group.draw(screen)
         
     
         

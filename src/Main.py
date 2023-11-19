@@ -369,9 +369,7 @@ while running:
         
     if (remaining_time == 0):
         distance_monster = 0
-    
-    print(distance_monster)
-    
+        
     if (distance_monster == 1):
         spooky_sound2.play()
 

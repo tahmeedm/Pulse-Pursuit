@@ -102,6 +102,16 @@ class Room:
     def makeForest(self):
         self.current_background = self.room_backgrounds[2]
         self.foreground = self.room_foregrounds[2]
+        self.obstacle_group.add(Tree(400, 305, (60, 200)))
+        self.obstacle_group.add(Bush(300, 360, (70, 30)))
+        self.obstacle_group.add(Bush(666, 555, (80, 30)))
+        self.obstacle_group.add(Bush(520, 333, (80, 33)))
+        self.obstacle_group.add(Bush(111, 111, (60, 30)))
+        self.obstacle_group.add(Tree(666, 150, (60, 200)))
+        self.obstacle_group.add(Bush(600, 120, (90, 40)))
+        self.touchables.add(Pillbottle(120, 555, (50, 50)))
+        self.touchables.add(Spiketrap(200, 256, (50, 25)))
+        self.obstacle_group.add(Tree(200, 550, (60, 150)))
     
     def makeEndRoom(self):
         self.makeBasement

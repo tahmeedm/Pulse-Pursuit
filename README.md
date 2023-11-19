@@ -1,3 +1,5 @@
+
+
 # Pulse Pursuit: A Heartbeat-Driven Horror Adventure
 ![image](https://github.com/tahmeedm/Pulse-Pursuit/assets/120093810/bfa3d8e0-2fb6-4389-afcf-57b3ebb8ede3)
 
@@ -29,7 +31,15 @@ Players embark on a thrilling adventure through various haunting environments, s
 "Pulse Pursuit" features dark, atmospheric visuals and a dynamic soundtrack that adapts to the player's actions. Key auditory elements include flashlight shakes, lever clicks, and varying footsteps. Visual cues such as lever animations contribute to the immersive horror experience.
 
 ## Development
-Developed using Python (version 3.10 or above) and the Pygame library, "Pulse Pursuit" integrates a live heart rate monitor as a core gameplay mechanic. This technical integration required extensive Python programming and a deep dive into game development challenges.
+
+### Prerequisites
+To run "Pulse Pursuit," you will need Python version 3.10 or above. Additionally, the game utilizes the Pygame library. Before running the game, ensure you have pygame-ce installed. You can install pygame-ce using the following command:
+
+```bash
+pip install pygame-ce
+```
+
+Developed using Python and the Pygame library, "Pulse Pursuit" integrates a live heart rate monitor as a core gameplay mechanic. This technical integration required extensive Python programming and a deep dive into game development challenges.
 
 ## Challenges and Learnings
 We encountered challenges in harmonizing the gameplay mechanics with the input from the heart rate monitor. This project broadened our understanding of Python game development and the integration of unique input devices, leading to innovative gameplay mechanics and immersive audio-visual synchronization.
@@ -42,3 +52,4 @@ We aim to further develop "Pulse Pursuit" by adding more diverse environments, e
 
 ### Summary
 "Pulse Pursuit" stands as a groundbreaking experiment in fear and strategy, blending physical and virtual responses in an immersive RPG horror setting. Each heartbeat and moment of tension or calmness shapes the player's journey, making "Pulse Pursuit" a testament to nerve and composure in a world of virtual terror.
+

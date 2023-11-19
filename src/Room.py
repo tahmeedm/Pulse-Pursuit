@@ -78,9 +78,9 @@ class Room:
         self.obstacle_group.add(Box(500, 250, (69, 69)))
         self.obstacle_group.add(Box(600, 400, (64, 45)))
         self.touchables.add(Spiketrap(700, 429, (50, 50)))
-        self.obstacle_group.add(Chair(650, 333, (50, 50)))
-        self.obstacle_group.add(Box(669, 200, (69, 69)))
-                # Locked door testing
+        self.obstacle_group.add(Chair(610, 333, (50, 50)))
+        self.obstacle_group.add(Box(669, 150, (69, 69)))
+        # Locked door testing
         
         # Create item instances
         item1 = InteractableItem(370, 300, "lib/sprites/lever-1.png", (43, 35), 1) # Replace "item1.png" with the actual image file
@@ -125,7 +125,16 @@ class Room:
         self.obstacle_group.add(Table(100, 100, (120, 40)))
         self.touchables.add(Spiketrap(610, 320, (50, 20)))
         self.touchables.add(Spiketrap(620, 100, (50, 20)))
-        self.obstacle_group.add(Box(226, 350, (70, 70)))
+        self.obstacle_group.add(Box(300, 350, (70, 70)))
+
+        item3 = InteractableItem(680, 520, "lib/sprites/lever-1.png", (43, 35), 1)
+        self.interactables.add(item3)
+
+        for i, item in enumerate(self.interactables):
+            item.lever_game = self.lever_games[i]
+
+        item3.lever_game.door_controlled = "E"
+
 
     def makeForest(self):
         self.current_background = self.room_backgrounds[2]
@@ -134,8 +143,8 @@ class Room:
         self.obstacle_group.add(Bush(300, 360, (70, 30)))
         self.obstacle_group.add(Bush(666, 555, (80, 30)))
         self.obstacle_group.add(Bush(520, 333, (80, 33)))
-        self.obstacle_group.add(Bush(111, 111, (60, 30)))
-        self.obstacle_group.add(Tree(666, 200, (60, 200)))
+        self.obstacle_group.add(Bush(111, 120, (60, 30)))
+        self.obstacle_group.add(Tree(666, 180, (60, 180)))
         self.obstacle_group.add(Bush(600, 120, (90, 40)))
         self.touchables.add(Pillbottle(120, 555, (50, 50)))
         self.touchables.add(Spiketrap(200, 256, (50, 25)))
@@ -144,9 +153,18 @@ class Room:
         self.obstacle_group.add(Rocks(360, 238, (30, 30)))
         self.obstacle_group.add(Bush(669, 420, (70, 30)))
         self.obstacle_group.add(Rocks(510, 500, (30, 30)))
-        self.obstacle_group.add(Rocks(350, 111, (30, 30)))
+        self.obstacle_group.add(Rocks(330, 111, (30, 30)))
         self.touchables.add(Pillbottle(710, 50, (50, 50)))
         self.touchables.add(Spiketrap(300, 500, (40, 30)))
+
+        item4 = InteractableItem(70, 70, "lib/sprites/lever-1.png", (43, 35), 1)
+        self.interactables.add(item4)
+
+        for i, item in enumerate(self.interactables):
+            item.lever_game = self.lever_games[i]
+
+        item4.lever_game.door_controlled = "W"
+
     
     def makeEndRoom(self):
         self.makeBasement

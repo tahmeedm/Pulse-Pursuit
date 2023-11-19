@@ -371,13 +371,15 @@ while running:
     #Heart Rate Stuff
     if (heartTickCount >= 20):
         heartTickCount = 0
-        heartRateSamples.append(int(heart_rate))    
+        heartRateSamples.append(random.randint(70, 130))    
     
     if (delta == 0 and len(heartRateSamples) == 2):
         temp = sum(heartRateSamples) / len(heartRateSamples)
         delta = temp - averageHeartRate
         averageHeartRate = temp
-    elif (len(heartRateSamples) >= 3 and delta != 0):
+    elif (delta != 0 and len(heartRateSamples) >= 3):
+        if (len(heartRateSamples) == 20):
+            heartRateSamples.pop(0)
         x = sum(heartRateSamples) / len(heartRateSamples)
         delta2 = x - averageHeartRate
         if(delta2 > delta):
@@ -387,9 +389,13 @@ while running:
             end_room_pity += 1
         delta = delta2
         averageHeartRate = x
+    
+    heartTickCount += 1
         
-    #print(averageHeartRate)
-    #print(delta)    
+    # print(averageHeartRate)
+    # print(delta)
+    # print(distance_monster) 
+    # print(heartRateSamples)   
     
     if (tickCount >= tickThreshold):
         distance_monster -= 1

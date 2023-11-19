@@ -1,8 +1,8 @@
+# This program was orginally developed by loic2665 on Github
+
 from sys import argv
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import socket
-
-
 
 def write_hr(hr="0"):
     file = open('lib/hr.txt', 'w+')

@@ -1,6 +1,8 @@
 import pygame
 from Touchables import *
 from Obstacles import *
+from Interactables import *
+from Lever import LeverGameScreen
 import random as rand
 
 WIDTH, HEIGHT = 800, 600
@@ -19,6 +21,7 @@ class Room:
             ClosedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), self.initial_position, "S"), 
             ClosedDoor(24, HEIGHT // 2, (32, 32), self.initial_position, "W")
             ]
+        self.locked_doors = [None, None, None, None]
         self.directional_positions = {
             "N" : (WIDTH // 2 - 2, 32),
             "E" : (64 + PLAYWIDTH, HEIGHT // 2),
@@ -29,6 +32,8 @@ class Room:
         for i in self.room_doors:
             self.touchables.add(i)
         
+        # Create a list to store LeverGameScreen instances for each interactable
+        self.lever_games = [LeverGameScreen(400, 400) for _ in range(2)]  # Adjust the range based on the number of interactable items
         
         self.create_room = {
             "Basement" : self.makeBasement, 
@@ -75,6 +80,29 @@ class Room:
         self.touchables.add(Spiketrap(700, 429, (50, 50)))
         self.obstacle_group.add(Chair(650, 333, (50, 50)))
         self.obstacle_group.add(Box(669, 200, (69, 69)))
+                # Locked door testing
+        
+        # Create item instances
+        item1 = InteractableItem(370, 300, "lib/sprites/lever-1.png", (43, 35), 1) # Replace "item1.png" with the actual image file
+        item2 = InteractableItem(200, 100, "lib/sprites/lever-1.png", (43, 35), 1) # Replace "item2.png" with the actual image file
+        self.interactables.add(item1, item2)
+        
+        # Associate each interactable item with a LeverGameScreen instance
+        for i, item in enumerate(self.interactables):
+            item.lever_game = self.lever_games[i]
+        
+        # Indicate the specific door that each lever controls
+        item1.lever_game.door_controlled = "S"
+        item2.lever_game.door_controlled = "N"
+        
+        # # Add the locked doors
+        # self.locked_doors[0] = LockedDoor(WIDTH // 2, 26, (32, 32), "N")
+        # self.obstacle_group.add(self.locked_doors[0])
+        # self.room_doors[0].kill()
+        
+        # self.locked_doors[2] = LockedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), "S")
+        # self.obstacle_group.add(self.locked_doors[2])
+        # self.room_doors[2].kill()
     
     def makeAbandonedHouse(self):
         self.current_background = self.room_backgrounds[1]
@@ -177,9 +205,18 @@ class Room:
         self.interactables.draw(screen)
         self.obstacle_group.draw(screen)
         
-    
-        
-        
-    
-    
-        
+    def unlock_door(self, door_direction):
+        match door_direction:
+            case "N":
+                self.locked_doors[0].kill()
+                self.touchables.add(self.room_doors[0])
+            case "E":
+                self.locked_doors[1].kill()
+                self.touchables.add(self.room_doors[1])
+            case "S":
+                self.locked_doors[2].kill()
+                self.touchables.add(self.room_doors[2])
+            case "W":
+                self.locked_doors[3].kill()
+                self.touchables.add(self.room_doors[3])
+                

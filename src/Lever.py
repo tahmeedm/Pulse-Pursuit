@@ -45,6 +45,7 @@ class LeverGameScreen:
         self.fixed_in_place = False
         self.final_fixed_angle = 0
         self.global_variable = False
+        self.door_controlled = ""
 
     def set_global_variable(self, value):
          self.global_variable = value
@@ -118,3 +119,5 @@ class LeverGameScreen:
     def get_global_variable(self):
         return self.global_variable
 
+    def get_door_controlled(self):
+        return self.door_controlled

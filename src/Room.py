@@ -53,6 +53,8 @@ class Room:
     def makeBasement(self):
         self.current_background = self.room_backgrounds[0]
         self.foreground = self.room_foregrounds[0]
+
+        # Add all touchables/obstacles/interactables
         self.touchables.add(Spiketrap(256, 256, (50, 50)))
         self.touchables.add(Spiketrap(427, 159, (50, 50)))
         self.touchables.add(Pillbottle(512, 512, (50, 50)))
@@ -67,17 +69,26 @@ class Room:
         self.obstacle_group.add(Box(90, 500, (69, 69)))
         self.obstacle_group.add(Table(200, 500, (69, 30)))
         self.obstacle_group.add(Bed(710, 50, (90, 40)))
-        self.obstacle_group.add(Box(160, 310, (50, 50)))
+        self.obstacle_group.add(Box(170, 310, (50, 50)))
         self.obstacle_group.add(Box(500, 250, (69, 69)))
         self.obstacle_group.add(Box(600, 400, (64, 45)))
         self.touchables.add(Spiketrap(700, 429, (50, 50)))
-        self.obstacle_group.add(Box(300, 500, (100, 100)))
+        self.obstacle_group.add(Box(260, 500, (100, 100)))
 
     
     def makeAbandonedHouse(self):
         self.current_background = self.room_backgrounds[1]
         self.foreground = self.room_foregrounds[1]
-        
+
+        # Add all touchables/obstacles/interactables
+        self.touchables.add(Spiketrap(297, 540, (50, 30)))
+        self.touchables.add(Pillbottle(433, 258, (50, 50)))
+        self.obstacle_group.add(Table(226, 289, (86, 30)))
+        self.obstacle_group.add(Box(420, 406, (50, 50)))
+        self.obstacle_group.add(Box(331, 197, (69, 50)))
+        self.obstacle_group.add(Table(599, 179, (80, 40)))
+        self.obstacle_group.add(Bed(232, 239, (80, 40)))
+
     def makeForest(self):
         self.current_background = self.room_backgrounds[2]
         self.foreground = self.room_foregrounds[2]
@@ -86,10 +97,10 @@ class Room:
         self.makeBasement
         self.touchables.empty()
         self.touchables.add(EndGoal(WIDTH // 2 - 25, HEIGHT // 2 - 25, (50, 50)))
-        self.obstacles.add(BlockedDoor(WIDTH // 2, 26, (32, 32), "N"))
-        self.obstacles.add(BlockedDoor(54 + PLAYWIDTH, HEIGHT // 2, (32, 32), "E"))
-        self.obstacles.add(BlockedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), "S"))
-        self.obstacles.add(BlockedDoor(24, HEIGHT // 2, (32, 32), "W"))
+        self.obstacle_group.add(BlockedDoor(WIDTH // 2, 26, (32, 32), "N"))
+        self.obstacle_group.add(BlockedDoor(54 + PLAYWIDTH, HEIGHT // 2, (32, 32), "E"))
+        self.obstacle_group.add(BlockedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), "S"))
+        self.obstacle_group.add(BlockedDoor(24, HEIGHT // 2, (32, 32), "W"))
     
     def set_room_type(self, room_name = ""):
         room_select = rand.randint(0, len(self.create_room) - 2)

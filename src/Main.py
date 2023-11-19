@@ -458,10 +458,10 @@ while running:
        
         screen.blit(leverMessage, (225,450))
         
-    # Check if lever pulled and unlock the doors
-    for item in room.interactables:
-        if item.lever_game.get_global_variable():
-            room.unlock_door(item.lever_game.get_door_controlled())
+    # # Check if lever pulled and unlock the doors
+    # for item in room.interactables:
+    #     if item.lever_game.get_global_variable():
+    #         room.unlock_door(item.lever_game.get_door_controlled())
 
     if scare_event[0] == True and scare_event[1] == 0 and flashlight_status == True:
         #Scare event initialization for flashlight fail

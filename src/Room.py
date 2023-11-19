@@ -95,14 +95,14 @@ class Room:
         item1.lever_game.door_controlled = "S"
         item2.lever_game.door_controlled = "N"
         
-        # Add the locked doors
-        self.locked_doors[0] = LockedDoor(WIDTH // 2, 26, (32, 32), "N")
-        self.obstacle_group.add(self.locked_doors[0])
-        self.room_doors[0].kill()
+        # # Add the locked doors
+        # self.locked_doors[0] = LockedDoor(WIDTH // 2, 26, (32, 32), "N")
+        # self.obstacle_group.add(self.locked_doors[0])
+        # self.room_doors[0].kill()
         
-        self.locked_doors[2] = LockedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), "S")
-        self.obstacle_group.add(self.locked_doors[2])
-        self.room_doors[2].kill()
+        # self.locked_doors[2] = LockedDoor(WIDTH // 2, 56 + PLAYHEIGHT, (32, 32), "S")
+        # self.obstacle_group.add(self.locked_doors[2])
+        # self.room_doors[2].kill()
     
     def makeAbandonedHouse(self):
         self.current_background = self.room_backgrounds[1]

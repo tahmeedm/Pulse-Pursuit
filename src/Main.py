@@ -354,6 +354,79 @@ while running:
         # Call the scare function with the screen, duration, player center, and elapsed time
         scare_event = scare()
 
+<<<<<<< Updated upstream
+=======
+    #Heart Rate Stuff
+    if (heartTickCount >= 20):
+        heartTickCount = 0
+        heartRateSamples.append(int(heart_rate))    
+    
+    if (delta == 0 and len(heartRateSamples) == 2):
+        temp = sum(heartRateSamples) / len(heartRateSamples)
+        delta = temp - averageHeartRate
+        averageHeartRate = temp
+    elif (len(heartRateSamples) >= 3):
+        if (len(heartRateSamples) == 10):
+            heartRateSamples.pop(0)
+        x = sum(heartRateSamples) / len(heartRateSamples)
+        delta2 = x - averageHeartRate
+        if(delta2 > delta):
+            tickCount += 5
+            end_room_pity -= 1
+        elif(delta2 < delta):
+            end_room_pity += 1
+        delta = delta2
+        averageHeartRate = x
+    
+    heartTickCount += 1
+        
+    # print(averageHeartRate)
+    # print(delta)
+    #print(distance_monster) 
+    # print(heartRateSamples)   
+    
+    if (tickCount >= tickThreshold):
+        distance_monster -= 1
+        tickCount = 0
+        
+    if (remaining_time == 0):
+        distance_monster = 0
+        
+    if (distance_monster == 1):
+        spooky_sound2.play()
+
+        # Create a red hue effect
+        
+        red_hue = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        red_hue.fill((255, 0, 0, 50))  # Red color with alpha for transparency
+        screen.blit(red_hue, (0, 0))
+        pygame.display.flip()
+
+
+
+    if (distance_monster == 0):
+        running = False  # Stop the main game loop
+        screen.fill((0, 0, 0))  # Fill the screen with black
+
+        # Display "You Died" message
+        died_font = pygame.font.SysFont('Times New Roman', 72)
+        died_text = died_font.render('You Died', True, (255, 0, 0))  # Red text
+        text_rect = died_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        screen.blit(died_text, text_rect)
+
+       
+        spooky_sound.play()
+
+        pygame.display.flip()  # Update the display
+        pygame.time.wait(5000)  # Wait for 5 seconds
+        pygame.quit()
+        sys.exit()
+    
+        
+    tickCount += 1   
+
+        
+>>>>>>> Stashed changes
     # Draw interaction prompt
     if not interaction_open:
         prompt_surface = interactionfont.render(prompt_text, True, (255, 255, 255))

@@ -123,6 +123,8 @@ hard_pity = 30
 minimum_pity = 3
 end_room_pity = 0
 
+distance_monster = 5
+
 # Main game loop
 running = True
 font = pygame.font.SysFont(None, 36)
@@ -301,6 +303,11 @@ while running:
     timer_text = timer_font.render(f'{minutes}:{seconds:02}', True, (255, 255, 255))
     screen.blit(timer_text, (10, HEIGHT - 40))  # Position at the bottom-left corner
 
+    if (elapsed_time % 5 == 0 and elapsed_time != 0):
+        distance_monster -= 1
+    elif (remaining_time == 0):
+        distance_monster = 0
+    
     # Draw interaction prompt
     if not interaction_open:
         prompt_surface = interactionfont.render(prompt_text, True, (255, 255, 255))

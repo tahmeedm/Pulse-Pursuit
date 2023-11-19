@@ -1,4 +1,5 @@
 # Pulse Pursuit: A Heartbeat-Driven Horror Adventure
+![image](https://github.com/tahmeedm/Pulse-Pursuit/assets/120093810/bfa3d8e0-2fb6-4389-afcf-57b3ebb8ede3)
 
 ## Inspiration
 "Pulse Pursuit" emerged from the captivating idea of merging physiological responses with interactive gameplay. We were drawn to the exhilarating nature of horror games and saw an opportunity to enhance this with the use of a live heart rate monitor, creating a unique and immersive gaming experience.

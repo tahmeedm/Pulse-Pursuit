@@ -58,11 +58,27 @@ class Room:
     def makeBasement(self):
         self.current_background = self.room_backgrounds[0]
         self.foreground = self.room_foregrounds[0]
+
+        # Add all touchables/obstacles/interactables
         self.touchables.add(Spiketrap(256, 256, (50, 50)))
+        self.touchables.add(Spiketrap(427, 159, (50, 50)))
         self.touchables.add(Pillbottle(512, 512, (50, 50)))
-        self.obstacle_group.add(Box(128, 128, (100, 100)))
-        
-        # Locked door testing
+        self.touchables.add(Pillbottle(70, 450, (50, 50)))
+        self.obstacle_group.add(Box(128, 120, (100, 100)))
+        self.obstacle_group.add(Box(420, 400, (60, 50)))
+        self.obstacle_group.add(Table(500, 100, (100, 30)))
+        self.obstacle_group.add(Box(360, 400, (69, 69)))
+        self.obstacle_group.add(Box(340, 300, (69, 69)))
+        self.obstacle_group.add(Box(490, 300, (69, 69)))
+        self.obstacle_group.add(Box(480, 400, (69, 69)))
+        self.obstacle_group.add(Box(90, 500, (69, 69)))
+        self.obstacle_group.add(Table(200, 500, (69, 30)))
+        self.obstacle_group.add(Bed(710, 50, (90, 40)))
+        self.obstacle_group.add(Box(180, 310, (50, 50)))
+        self.obstacle_group.add(Box(500, 250, (69, 69)))
+        self.obstacle_group.add(Box(600, 400, (64, 45)))
+        self.touchables.add(Spiketrap(700, 429, (50, 50)))
+        self.obstacle_group.add(Box(260, 500, (100, 100)))
         
         # Create item instances
         item1 = InteractableItem(400, 300, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40)) # Replace "item1.png" with the actual image file
@@ -89,10 +105,39 @@ class Room:
     def makeAbandonedHouse(self):
         self.current_background = self.room_backgrounds[1]
         self.foreground = self.room_foregrounds[1]
-        
+
+        # Add all touchables/obstacles/interactables
+        self.touchables.add(Spiketrap(297, 540, (50, 30)))
+        self.touchables.add(Spiketrap(186, 397, (40, 20)))
+        self.touchables.add(Pillbottle(433, 258, (50, 50)))
+        self.obstacle_group.add(Table(226, 289, (86, 30)))
+        self.obstacle_group.add(Box(420, 406, (50, 50)))
+        self.obstacle_group.add(Box(331, 197, (69, 50)))
+        self.obstacle_group.add(Table(599, 179, (80, 40)))
+        self.obstacle_group.add(Bed(232, 70, (80, 40)))
+        self.obstacle_group.add(Box(367, 254, (100, 100)))
+        self.obstacle_group.add(Box(483, 158, (50, 50)))
+        self.obstacle_group.add(Chair(666, 520, (50, 50)))
+        self.obstacle_group.add(Box(650, 450, (100, 100)))
+        self.obstacle_group.add(Box(70, 450, (69, 69)))
+        self.obstacle_group.add(Table(100, 100, (120, 40)))
+        self.touchables.add(Spiketrap(610, 320, (50, 20)))
+        self.touchables.add(Spiketrap(620, 100, (50, 20)))
+        self.obstacle_group.add(Box(226, 350, (70, 70)))
+
     def makeForest(self):
         self.current_background = self.room_backgrounds[2]
         self.foreground = self.room_foregrounds[2]
+        self.obstacle_group.add(Tree(400, 305, (60, 200)))
+        self.obstacle_group.add(Bush(300, 360, (70, 30)))
+        self.obstacle_group.add(Bush(666, 555, (80, 30)))
+        self.obstacle_group.add(Bush(520, 333, (80, 33)))
+        self.obstacle_group.add(Bush(111, 111, (60, 30)))
+        self.obstacle_group.add(Tree(666, 150, (60, 200)))
+        self.obstacle_group.add(Bush(600, 120, (90, 40)))
+        self.touchables.add(Pillbottle(120, 555, (50, 50)))
+        self.touchables.add(Spiketrap(200, 256, (50, 25)))
+        self.obstacle_group.add(Tree(200, 550, (60, 150)))
     
     def makeEndRoom(self):
         self.makeBasement

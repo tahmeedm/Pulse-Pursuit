@@ -1,6 +1,11 @@
 import pygame
 import sys
 
+pygame.init()
+spike_sound = pygame.mixer.Sound("lib/sounds/Trap_poke1.mp3")
+speed_sound = pygame.mixer.Sound("lib/sounds/Pill_enchant1.mp3")
+door_open_sound = pygame.mixer.Sound("lib/sounds/Door_open1.mp3")
+
 """
 Items that are instantly interacted with when the Player touches it.
 """
@@ -21,6 +26,7 @@ class Spiketrap(Touchable):
         super().__init__(x, y, "lib/sprites/spiketrap-1.png", size)
         
     def use(self, remaining_time, player):
+        spike_sound.play()
         player.player_speed -= 2
         player.slowed = True
         player.slowed_time = remaining_time
@@ -39,6 +45,7 @@ class Pillbottle(Touchable):
         super().__init__(x, y, "lib/sprites/pillbottle-1.png", size)
         
     def use(self, remaining_time, player):
+        speed_sound.play()
         player.player_speed += 2
         player.hastened = True
         player.hastened_time = remaining_time
@@ -68,6 +75,7 @@ class ClosedDoor(Touchable):
         y = self.game_map_pos[1]
         
         player.enter_room(self.room_pos)
+        door_open_sound.play()
         
         match self.room_pos:
             case "N":

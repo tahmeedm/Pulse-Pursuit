@@ -357,12 +357,14 @@ while running:
         scare_event = scare()
 
     
-    if (tickCount >= 50):
+    if (tickCount >= 110):
         distance_monster -= 1
         tickCount = 0
         
     if (remaining_time == 0):
         distance_monster = 0
+    
+    print(distance_monster)
     
     if (distance_monster == 0):
         running = False  # Stop the main game loop

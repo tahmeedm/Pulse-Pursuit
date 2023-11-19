@@ -80,9 +80,11 @@ class Room:
         self.touchables.add(Spiketrap(700, 429, (50, 50)))
         self.obstacle_group.add(Box(260, 500, (100, 100)))
         
+        # Locked door testing
+        
         # Create item instances
-        item1 = InteractableItem(400, 300, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40)) # Replace "item1.png" with the actual image file
-        item2 = InteractableItem(200, 100, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40)) # Replace "item2.png" with the actual image file
+        item1 = InteractableItem(400, 300, "lib/sprites/lever-1.png", (43, 35), 1) # Replace "item1.png" with the actual image file
+        item2 = InteractableItem(200, 100, "lib/sprites/lever-1.png", (43, 35), 1) # Replace "item2.png" with the actual image file
         self.interactables.add(item1, item2)
         
         # Associate each interactable item with a LeverGameScreen instance

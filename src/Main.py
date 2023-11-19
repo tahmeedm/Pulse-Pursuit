@@ -446,7 +446,7 @@ while running:
             leverMessage = interactionfont.render('Hold [SPACE] to pull the lever', False, (255, 255, 255))
         else:
             leverMessage = interactionfont.render('This lever seems to be pulled', False, (255, 255, 255))
-            interactable_items.sprites()[closest_index].update(new_sheet_col=0)
+            room.interactables.sprites()[closest_index].update(new_sheet_col=0)
 
         prompt_alpha2 = min(255, prompt_alpha2 + prompt_fade_speed)
 

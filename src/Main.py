@@ -59,7 +59,6 @@ mouse_anxiety = 0.15
 
 # Set up sprite group
 player_group = pygame.sprite.Group()
-obstacle_group = pygame.sprite.Group()
 player_group.add(player)
 
 # Create item instances
@@ -205,7 +204,7 @@ while running:
     new_hitbox = pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)
 
     # Check if the new hitbox would collide with any obstacles
-    collide = any(new_hitbox.colliderect(obstacle.rect) for obstacle in obstacle_group)
+    collide = any(new_hitbox.colliderect(obstacle.rect) for obstacle in room.obstacle_group)
 
     if playableArea.contains(pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)) and not collide:
         # If within bounds, update the player's position and hitbox

@@ -141,6 +141,7 @@ minimum_pity = 3
 end_room_pity = 0
 
 distance_monster = 5
+tickCount = 0
 
 # Main game loop
 running = True
@@ -160,11 +161,9 @@ while running:
     speed = mousedelta.length()
 
     if speed > acceleration_threshold:
-        # print(f"Mouse Accelerated: {speed}") #prints out speed when high acceleration is detected
         mouse_anxiety +=0.65
         flashlight_shake.play()
         flashlight_shake.fadeout(500)
-    print(mouse_anxiety)
 
     prev_mouse_x = mouse_x
     prev_mouse_y = mouse_y
@@ -285,7 +284,6 @@ while running:
     for item in pygame.sprite.spritecollide(player, interactable_items, False):
         # Interaction logic
         if keys[pygame.K_f] and not interaction_open:
-            print(f"Interacted with the item at ({item.rect.centerx}, {item.rect.centery})!")
             interaction_open = True
 
         if closest_distance > interaction_range:
@@ -355,12 +353,20 @@ while running:
         # Call the scare function with the screen, duration, player center, and elapsed time
         scare_event = scare()
 
-    if (elapsed_time % 5 == 0 and elapsed_time != 0):
-        distance_monster -= 1
-    elif (remaining_time == 0):
-        distance_monster = 0
-        
     
+    if (tickCount >= 50):
+        distance_monster -= 1
+        tickCount = 0
+        
+    if (remaining_time == 0):
+        distance_monster = 0
+    
+    if (distance_monster == 0):
+        pass
+    
+        
+    tickCount += 1   
+
         
     # Draw interaction prompt
     if not interaction_open:
@@ -426,7 +432,6 @@ while running:
         #Scare event initialization for Shadow run
         spooksound_status = True
         scare_sound = pygame.mixer.Sound(soundlist[scare_event[2]])
-        print("RANDOM SOUND CHOSEN",scare_event[2])
         scare_sound.play()
     
     if scare_event[0] == True and scare_event[1] == 2 and spooksound_status == True:
@@ -434,6 +439,8 @@ while running:
         spooksound_status = False
         scare_event[0] = False
 
+    
+    
     pygame.display.flip()
     clock.tick(60)
 

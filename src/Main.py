@@ -149,6 +149,12 @@ end_room_pity = 0
 
 distance_monster = 5
 tickCount = 0
+tickThreshold = 300
+
+heartTickCount = 0
+heartRateSamples = []
+averageHeartRate = 0
+delta = 0
 run_intro(WIDTH, HEIGHT, screen)
 
 
@@ -362,8 +368,30 @@ while running:
         # Call the scare function with the screen, duration, player center, and elapsed time
         scare_event = scare()
 
+    #Heart Rate Stuff
+    if (heartTickCount >= 20):
+        heartTickCount = 0
+        heartRateSamples.append(int(heart_rate))    
     
-    if (tickCount >= 300):
+    if (delta == 0 and len(heartRateSamples) == 2):
+        temp = sum(heartRateSamples) / len(heartRateSamples)
+        delta = temp - averageHeartRate
+        averageHeartRate = temp
+    elif (len(heartRateSamples) >= 3 and delta != 0):
+        x = sum(heartRateSamples) / len(heartRateSamples)
+        delta2 = x - averageHeartRate
+        if(delta2 > delta):
+            tickThreshold -= 10
+            end_room_pity -= 1
+        elif(delta2 < delta):
+            end_room_pity += 1
+        delta = delta2
+        averageHeartRate = x
+        
+    #print(averageHeartRate)
+    #print(delta)    
+    
+    if (tickCount >= tickThreshold):
         distance_monster -= 1
         tickCount = 0
         

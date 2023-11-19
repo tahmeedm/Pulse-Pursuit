@@ -371,7 +371,7 @@ while running:
     #Heart Rate Stuff
     if (heartTickCount >= 20):
         heartTickCount = 0
-        heartRateSamples.append(int(d))    
+        heartRateSamples.append(int(heart_rate))    
     
     if (delta == 0 and len(heartRateSamples) == 2):
         temp = sum(heartRateSamples) / len(heartRateSamples)

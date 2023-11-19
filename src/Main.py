@@ -140,6 +140,8 @@ hard_pity = 30
 minimum_pity = 3
 end_room_pity = 0
 
+distance_monster = 5
+
 # Main game loop
 running = True
 font = pygame.font.SysFont(None, 36)
@@ -352,6 +354,11 @@ while running:
         # Call the scare function with the screen, duration, player center, and elapsed time
         scare_event = scare()
 
+    if (elapsed_time % 5 == 0 and elapsed_time != 0):
+        distance_monster -= 1
+    elif (remaining_time == 0):
+        distance_monster = 0
+    
     # Draw interaction prompt
     if not interaction_open:
         prompt_surface = interactionfont.render(prompt_text, True, (255, 255, 255))

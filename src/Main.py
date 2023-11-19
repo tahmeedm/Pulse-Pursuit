@@ -377,17 +377,19 @@ while running:
         temp = sum(heartRateSamples) / len(heartRateSamples)
         delta = temp - averageHeartRate
         averageHeartRate = temp
-    elif (len(heartRateSamples) >= 3):
+    elif (len(heartRateSamples) >= 3 and delta != 0):
         x = sum(heartRateSamples) / len(heartRateSamples)
         delta2 = x - averageHeartRate
         if(delta2 > delta):
             tickThreshold -= 10
-            end_room_pity += 1
-        elif(delta2 < delta):
-            tickThreshold += 10
             end_room_pity -= 1
+        elif(delta2 < delta):
+            end_room_pity += 1
         delta = delta2
-        averageHeartRate = x    
+        averageHeartRate = x
+        
+    print(averageHeartRate)
+    print(delta)    
     
     if (tickCount >= 300):
         distance_monster -= 1

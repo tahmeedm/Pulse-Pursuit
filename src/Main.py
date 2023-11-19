@@ -247,6 +247,7 @@ while running:
             
             if(world_map[current_room_position[0]][current_room_position[1]] is None):
                 end_room_pity += 1
+                distance_monster += 1
                 
             if (r <= end_room_pity and world_map[current_room_position[0]][current_room_position[1]] is None):
                 room = Room(current_room_position)
@@ -358,7 +359,9 @@ while running:
         distance_monster -= 1
     elif (remaining_time == 0):
         distance_monster = 0
+        
     
+        
     # Draw interaction prompt
     if not interaction_open:
         prompt_surface = interactionfont.render(prompt_text, True, (255, 255, 255))

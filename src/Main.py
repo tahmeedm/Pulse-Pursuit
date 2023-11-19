@@ -62,9 +62,10 @@ player_group = pygame.sprite.Group()
 player_group.add(player)
 
 # Create item instances
-item1 = InteractableItem(400, 300, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40))  # Replace "item1.png" with the actual image file
-item2 = InteractableItem(200, 100, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40))  # Replace "item2.png" with the actual image file
-interactable_items = pygame.sprite.Group(item1, item2)
+item_rect = pygame.Rect(0, 0, 4, 4)  # Example: a 40x40 region at the top-left of the sprite sheet
+item1 = InteractableItem(400, 300, "lib/sprites/lever-1.png", (43, 35), 1)  # Replace "item1.png" with the actual image file
+item2 = InteractableItem(200, 100, "lib/sprites/lever-1.png", (43, 35), 1)  # Replace "item1.png" with the actual image file
+interactable_items = pygame.sprite.Group(item1,item2)
 
 # Associate each interactable item with a LeverGameScreen instance
 for i, item in enumerate(interactable_items):
@@ -87,7 +88,7 @@ clock = pygame.time.Clock()
 elapsed_time_scare = 0
 last_scare = 0
 time_scare_limit = 60
-scare_frequency = 20 #default is 20 seconds
+scare_frequency = 30 #default is 30 seconds
 scare_duration = 3
 scare_event = False, 0
 
@@ -375,6 +376,7 @@ while running:
             leverMessage = interactionfont.render('Hold [SPACE] to pull the lever', False, (255, 255, 255))
         else:
             leverMessage = interactionfont.render('This lever seems to be pulled', False, (255, 255, 255))
+            interactable_items.sprites()[closest_index].update(new_sheet_col=0)
 
         prompt_alpha2 = min(255, prompt_alpha2 + prompt_fade_speed)
 

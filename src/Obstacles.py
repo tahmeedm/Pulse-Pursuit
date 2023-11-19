@@ -25,6 +25,22 @@ class BlockedDoor(Obstacle):
                 self.image = pygame.transform.rotate(self.image, 180)
             case "W":
                 self.image = pygame.transform.rotate(self.image, 90)
+                
+class LockedDoor(Obstacle):
+    def __init__(self, x, y, size, room_pos):
+        super().__init__(x, y, "lib/sprites/lockeddoor-1.png", size)
+        
+        self.room_pos = room_pos
+        
+        match self.room_pos:
+            case "N":
+                self.image = pygame.transform.rotate(self.image, 0)
+            case "E":
+                self.image = pygame.transform.rotate(self.image, 270)
+            case "S":
+                self.image = pygame.transform.rotate(self.image, 180)
+            case "W":
+                self.image = pygame.transform.rotate(self.image, 90)
         
 class Table(Obstacle):
     def __init__(self, x, y, size):

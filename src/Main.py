@@ -9,6 +9,7 @@ from Interactables import *
 from Lever import LeverGameScreen
 from Obstacles import *
 from Scares import *
+from Intro import run_intro
 import threading
 import time
 import subprocess
@@ -24,8 +25,15 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_mode((WIDTH, HEIGHT))
 
-# Create a list to store LeverGameScreen instances for each interactable
-lever_games = [LeverGameScreen(400, 400) for _ in range(2)]  # Adjust the range based on the number of interactable items
+#Set up audio for dead screen
+spooky_sound = pygame.mixer.Sound("lib/sounds/Spooky_sound4.mp3")
+spooky_sound2 = pygame.mixer.Sound("lib/sounds/Spooky_sound1.mp3")
+
+
+#Set up audio for dead screen
+spooky_sound = pygame.mixer.Sound("lib/sounds/Spooky_sound4.mp3")
+spooky_sound2 = pygame.mixer.Sound("lib/sounds/Spooky_sound1.mp3")
+
 pygame.display.set_caption("Pulse Pursuit")
 
 # Create player instance (passing the path to the sprite sheet)
@@ -60,16 +68,6 @@ mouse_anxiety = 0.15
 # Set up sprite group
 player_group = pygame.sprite.Group()
 player_group.add(player)
-
-# Create item instances
-item_rect = pygame.Rect(0, 0, 4, 4)  # Example: a 40x40 region at the top-left of the sprite sheet
-item1 = InteractableItem(400, 300, "lib/sprites/lever-1.png", (43, 35), 1)  # Replace "item1.png" with the actual image file
-item2 = InteractableItem(200, 100, "lib/sprites/lever-1.png", (43, 35), 1)  # Replace "item1.png" with the actual image file
-interactable_items = pygame.sprite.Group(item1,item2)
-
-# Associate each interactable item with a LeverGameScreen instance
-for i, item in enumerate(interactable_items):
-    item.lever_game = lever_games[i]
 
 # Set up interaction range
 interaction_range = 50
@@ -140,7 +138,17 @@ hard_pity = 30
 minimum_pity = 3
 end_room_pity = 0
 
+
 distance_monster = 5
+tickCount = 0
+tickThreshold = 300
+
+heartTickCount = 0
+heartRateSamples = []
+averageHeartRate = 0
+delta = 0
+run_intro(WIDTH, HEIGHT, screen)
+
 
 # Main game loop
 running = True
@@ -160,11 +168,9 @@ while running:
     speed = mousedelta.length()
 
     if speed > acceleration_threshold:
-        # print(f"Mouse Accelerated: {speed}") #prints out speed when high acceleration is detected
         mouse_anxiety +=0.65
         flashlight_shake.play()
         flashlight_shake.fadeout(500)
-    print(mouse_anxiety)
 
     prev_mouse_x = mouse_x
     prev_mouse_y = mouse_y
@@ -247,6 +253,7 @@ while running:
             
             if(world_map[current_room_position[0]][current_room_position[1]] is None):
                 end_room_pity += 1
+                distance_monster += 1
                 
             if (r <= end_room_pity and world_map[current_room_position[0]][current_room_position[1]] is None):
                 room = Room(current_room_position)
@@ -275,23 +282,21 @@ while running:
         
     room.draw_room(screen, playableArea)
     
+    # If a room has interactables
+    if bool(room.interactables):
         # Update prompt alpha based on player's proximity to the closest item
-    closest_item = min(interactable_items, key=lambda item: pygame.math.Vector2(item.rect.centerx - player.rect.centerx, item.rect.centery - player.rect.centery).length())
-    closest_distance = pygame.math.Vector2(closest_item.rect.centerx - player.rect.centerx, closest_item.rect.centery - player.rect.centery).length()
-    prompt_alpha = min(255, prompt_alpha + prompt_fade_speed) if closest_distance < interaction_range else max(0, prompt_alpha - prompt_fade_speed)
+        closest_item = min(room.interactables, key=lambda item: pygame.math.Vector2(item.rect.centerx - player.rect.centerx, item.rect.centery - player.rect.centery).length())
+        closest_distance = pygame.math.Vector2(closest_item.rect.centerx - player.rect.centerx, closest_item.rect.centery - player.rect.centery).length()
+        prompt_alpha = min(255, prompt_alpha + prompt_fade_speed) if closest_distance < interaction_range else max(0, prompt_alpha - prompt_fade_speed)
     
-    #Check for interactions with each item
-    for item in pygame.sprite.spritecollide(player, interactable_items, False):
-        # Interaction logic
-        if keys[pygame.K_f] and not interaction_open:
-            print(f"Interacted with the item at ({item.rect.centerx}, {item.rect.centery})!")
-            interaction_open = True
+        #Check for interactions with each item
+        for item in pygame.sprite.spritecollide(player, room.interactables, False):
+            # Interaction logic
+            if keys[pygame.K_f] and not interaction_open:
+                    interaction_open = True
 
-        if closest_distance > interaction_range:
-            interaction_open = False
-                
-    # Draw interactable items
-    interactable_items.draw(screen)
+            if closest_distance > interaction_range:
+                interaction_open = False
 
     # Draw everything
     player_group.draw(screen)
@@ -434,24 +439,23 @@ while running:
         prompt_alpha2 = max(0,prompt_alpha2 - prompt_fade_speed)
         screen.blit(prompt_surface, (260, 400))
         
-
     # Draw interaction surface
     if interaction_open:
         interaction_surface = pygame.Surface((400, 400))
 
         # Find the index of the closest item in the interactable_items list
-        closest_index = interactable_items.sprites().index(closest_item)
-        lever_games[closest_index].update(pygame.K_SPACE)
+        closest_index = room.interactables.sprites().index(closest_item)
+        room.lever_games[closest_index].update(pygame.K_SPACE)
 
         # Use the lever_game instance to get the surface
-        lever_surface = lever_games[closest_index].get_surface()
-        lever_status = lever_games[closest_index].get_global_variable()
+        lever_surface = room.lever_games[closest_index].get_surface()
+        lever_status = room.lever_games[closest_index].get_global_variable()
 
         if lever_status == False:
             leverMessage = interactionfont.render('Hold [SPACE] to pull the lever', False, (255, 255, 255))
         else:
             leverMessage = interactionfont.render('This lever seems to be pulled', False, (255, 255, 255))
-            interactable_items.sprites()[closest_index].update(new_sheet_col=0)
+            room.interactables.sprites()[closest_index].update(new_sheet_col=0)
 
         prompt_alpha2 = min(255, prompt_alpha2 + prompt_fade_speed)
 
@@ -462,6 +466,11 @@ while running:
         screen.blit(lever_surface, (200, 100))
        
         screen.blit(leverMessage, (225,450))
+        
+    # # Check if lever pulled and unlock the doors
+    # for item in room.interactables:
+    #     if item.lever_game.get_global_variable():
+    #         room.unlock_door(item.lever_game.get_door_controlled())
 
     if scare_event[0] == True and scare_event[1] == 0 and flashlight_status == True:
         #Scare event initialization for flashlight fail
@@ -492,7 +501,6 @@ while running:
         #Scare event initialization for Shadow run
         spooksound_status = True
         scare_sound = pygame.mixer.Sound(soundlist[scare_event[2]])
-        print("RANDOM SOUND CHOSEN",scare_event[2])
         scare_sound.play()
     
     if scare_event[0] == True and scare_event[1] == 2 and spooksound_status == True:
@@ -500,6 +508,8 @@ while running:
         spooksound_status = False
         scare_event[0] = False
 
+    
+    
     pygame.display.flip()
     clock.tick(60)
 

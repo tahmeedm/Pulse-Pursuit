@@ -69,7 +69,7 @@ class Room:
         self.obstacle_group.add(Box(90, 500, (69, 69)))
         self.obstacle_group.add(Table(200, 500, (69, 30)))
         self.obstacle_group.add(Bed(710, 50, (90, 40)))
-        self.obstacle_group.add(Box(170, 310, (50, 50)))
+        self.obstacle_group.add(Box(180, 310, (50, 50)))
         self.obstacle_group.add(Box(500, 250, (69, 69)))
         self.obstacle_group.add(Box(600, 400, (64, 45)))
         self.touchables.add(Spiketrap(700, 429, (50, 50)))
@@ -82,12 +82,22 @@ class Room:
 
         # Add all touchables/obstacles/interactables
         self.touchables.add(Spiketrap(297, 540, (50, 30)))
+        self.touchables.add(Spiketrap(186, 397, (40, 20)))
         self.touchables.add(Pillbottle(433, 258, (50, 50)))
         self.obstacle_group.add(Table(226, 289, (86, 30)))
         self.obstacle_group.add(Box(420, 406, (50, 50)))
         self.obstacle_group.add(Box(331, 197, (69, 50)))
         self.obstacle_group.add(Table(599, 179, (80, 40)))
-        self.obstacle_group.add(Bed(232, 239, (80, 40)))
+        self.obstacle_group.add(Bed(232, 70, (80, 40)))
+        self.obstacle_group.add(Box(367, 254, (100, 100)))
+        self.obstacle_group.add(Box(483, 158, (50, 50)))
+        self.obstacle_group.add(Chair(666, 520, (50, 50)))
+        self.obstacle_group.add(Box(650, 450, (100, 100)))
+        self.obstacle_group.add(Box(70, 450, (69, 69)))
+        self.obstacle_group.add(Table(100, 100, (120, 40)))
+        self.touchables.add(Spiketrap(610, 320, (50, 20)))
+        self.touchables.add(Spiketrap(620, 100, (50, 20)))
+        self.obstacle_group.add(Box(226, 350, (70, 70)))
 
     def makeForest(self):
         self.current_background = self.room_backgrounds[2]

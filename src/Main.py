@@ -63,7 +63,7 @@ player_group.add(player)
 
 # Create item instances
 item_rect = pygame.Rect(0, 0, 4, 4)  # Example: a 40x40 region at the top-left of the sprite sheet
-item1 = InteractableItem(400, 300, "lib/sprites/lever-1.png", (43, 35), 1)  # Replace "item1.png" with the actual image file
+item1 = InteractableItem(370, 300, "lib/sprites/lever-1.png", (43, 35), 1)  # Replace "item1.png" with the actual image file
 item2 = InteractableItem(200, 100, "lib/sprites/lever-1.png", (43, 35), 1)  # Replace "item1.png" with the actual image file
 interactable_items = pygame.sprite.Group(item1,item2)
 

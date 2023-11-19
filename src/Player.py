@@ -26,6 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.direction = 0  # 0: Down, 1: Left, 2: Right, 3: Up
         self.index = 0
         self.image = self.frames[self.direction * 4 + self.index]
+        self.mask = pygame.mask.from_surface(self.image)
         self.hitbox = pygame.Rect(80, 80, 41, 57)
     
         self.hitbox.center = (WIDTH // 2, HEIGHT // 2)

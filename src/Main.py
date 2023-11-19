@@ -8,6 +8,7 @@ from Touchables import *
 from Interactables import *
 from Lever import LeverGameScreen
 from Obstacles import *
+from Scares import *
 import threading
 import time
 import subprocess
@@ -34,6 +35,9 @@ player = Player("lib/sprites/player.png", initial_x=400, initial_y=300)
 walk_fast = pygame.mixer.Sound("lib/sounds/Walk_fast1.mp3")
 sound_played_walk = bool(0)
 flashlight_shake = pygame.mixer.Sound("lib/sounds/Flashlight_shake1.mp3")
+flashlight_fail = pygame.mixer.Sound("lib/sounds/Flashlight_fail1.mp3")
+flashlight_switch = pygame.mixer.Sound("lib/sounds/Flashlight_switch1.mp3")
+Shadown_run_sound = pygame.mixer.Sound("lib/sounds/RunningShadow1.mp3")
 
 # Flashlight parameters
 cone_radius = 150
@@ -41,17 +45,27 @@ cone_height = 100
 player_angle = 0  # Initial angle
 maxrange = 250
 
+#Scare parameters
+flashlight_status = True
+shadowrun_status = False
+shadow_duration = 0.4
+orbit_radius = 140
+orbit_speed = 0.01
+spooksound_status = False
+
 prev_mouse_x, prev_mouse_y = pygame.mouse.get_pos()
-acceleration_threshold = 150
+acceleration_threshold = 115
+mouse_anxiety = 0.15
 
 # Set up sprite group
 player_group = pygame.sprite.Group()
 player_group.add(player)
 
 # Create item instances
-item1 = InteractableItem(400, 300, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40))  # Replace "item1.png" with the actual image file
-item2 = InteractableItem(200, 100, "lib/sprites/386577_stardoge_8-bit-pokeball.png", (40, 40))  # Replace "item2.png" with the actual image file
-interactable_items = pygame.sprite.Group(item1, item2)
+item_rect = pygame.Rect(0, 0, 4, 4)  # Example: a 40x40 region at the top-left of the sprite sheet
+item1 = InteractableItem(400, 300, "lib/sprites/lever-1.png", (43, 35), 1)  # Replace "item1.png" with the actual image file
+item2 = InteractableItem(200, 100, "lib/sprites/lever-1.png", (43, 35), 1)  # Replace "item1.png" with the actual image file
+interactable_items = pygame.sprite.Group(item1,item2)
 
 # Associate each interactable item with a LeverGameScreen instance
 for i, item in enumerate(interactable_items):
@@ -68,12 +82,15 @@ prompt_alpha2 = 0
 prompt_fade_speed =  7
 interactionfont = pygame.font.Font(None, 36)
 
-obstacles = pygame.sprite.Group()
-box = Box(128, 128, (60, 60), screen)
-obstacles.add(box)
 
 # Set up clock
 clock = pygame.time.Clock()
+elapsed_time_scare = 0
+last_scare = 0
+time_scare_limit = 60
+scare_frequency = 30 #default is 30 seconds
+scare_duration = 3
+scare_event = False, 0
 
 rectangle_width = 722  # Adjust the width as needed
 rectangle_height = 518  # Adjust the height as needed
@@ -144,8 +161,10 @@ while running:
 
     if speed > acceleration_threshold:
         # print(f"Mouse Accelerated: {speed}") #prints out speed when high acceleration is detected
+        mouse_anxiety +=0.65
         flashlight_shake.play()
         flashlight_shake.fadeout(500)
+    print(mouse_anxiety)
 
     prev_mouse_x = mouse_x
     prev_mouse_y = mouse_y
@@ -183,22 +202,26 @@ while running:
     # Temporary variables for the new hitbox position
     new_hitbox_x = player.hitbox.x + dx
     new_hitbox_y = player.hitbox.y + dy
-    
-    if playableArea.contains(pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)):
+
+    # Create a new rect for the hitbox at the new position
+    new_hitbox = pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)
+
+    # Check if the new hitbox would collide with any obstacles
+    collide = any(new_hitbox.colliderect(obstacle.rect) for obstacle in room.obstacle_group)
+
+    if playableArea.contains(pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)) and not collide:
         # If within bounds, update the player's position and hitbox
         player.update(dx, dy)
-        player.hitbox.move(dx, dy)
+        player.hitbox.move(dx, dy)   
 
     if dx != 0 or dy != 0:
         if not sound_played_walk:
             sound_played_walk = True
             walk_fast.play(loops=-1)  # Set loops to -1 for infinite looping
-            # print(sound_played_walk)
     else:
         if sound_played_walk:
             sound_played_walk = False
             walk_fast.fadeout(500)
-            # print(sound_played_walk)
 
         dx /= 1.41
         dy /= 1.41
@@ -272,7 +295,6 @@ while running:
 
     # Draw everything
     player_group.draw(screen)
-    #touchables.draw(screen)
     
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
@@ -285,6 +307,21 @@ while running:
     pygame.draw.polygon(black_layer, (90, 90, 0, 150), Flashlight_cone(distance, cone_radius, player_angle,player.rect.center,maxrange))
     # Draw the flashlight circle
     pygame.draw.ellipse(black_layer, (90, 90, 0, 80), Flashlight_circle(distance,mouse_x, mouse_y, cone_radius,player.rect.center,maxrange))
+    
+    if scare_event[0] == True and shadowrun_status == True:
+        #Scare event loop for Shadow run
+        # Update orbiting circle position
+        orbit_angle = pygame.time.get_ticks() * orbit_speed
+        orbiting_circle_x = player.rect.center[0] + orbit_radius * math.cos(orbit_angle)
+        orbiting_circle_y = player.rect.center[1] + orbit_radius * math.sin(orbit_angle)
+
+        # Draw Shadow monster
+        pygame.draw.circle(black_layer, (0,0,0), (int(orbiting_circle_x), int(orbiting_circle_y)), 20)
+
+        if elapsed_time >= last_scare + (shadow_duration):
+            scare_event[0] = False
+            shadowrun_status = False 
+    
     # Apply Blur effect to shadows
     pygame.transform.box_blur(black_layer, 20, repeat_edge_pixels=True, dest_surface=VFXblack_layer)
 
@@ -303,11 +340,20 @@ while running:
     timer_text = timer_font.render(f'{minutes}:{seconds:02}', True, (255, 255, 255))
     screen.blit(timer_text, (10, HEIGHT - 40))  # Position at the bottom-left corner
 
-    if (elapsed_time % 5 == 0 and elapsed_time != 0):
-        distance_monster -= 1
-    elif (remaining_time == 0):
-        distance_monster = 0
-    
+    #Chance of scare
+    elapsed_time_scare = elapsed_time - last_scare
+
+    if((elapsed_time_scare/time_scare_limit)<1):
+        chance_of_scare = ((2.718**((int(heart_rate)-60)/25)/600)/scare_frequency)*(2.718**(-1/mouse_anxiety))*(2)
+    else:
+        chance_of_scare = 1
+
+    if random.random() < chance_of_scare:
+        chance_of_scare = 0
+        last_scare = elapsed_time
+        # Call the scare function with the screen, duration, player center, and elapsed time
+        scare_event = scare()
+
     # Draw interaction prompt
     if not interaction_open:
         prompt_surface = interactionfont.render(prompt_text, True, (255, 255, 255))
@@ -332,6 +378,7 @@ while running:
             leverMessage = interactionfont.render('Hold [SPACE] to pull the lever', False, (255, 255, 255))
         else:
             leverMessage = interactionfont.render('This lever seems to be pulled', False, (255, 255, 255))
+            interactable_items.sprites()[closest_index].update(new_sheet_col=0)
 
         prompt_alpha2 = min(255, prompt_alpha2 + prompt_fade_speed)
 
@@ -340,7 +387,45 @@ while running:
 
         # Blit lever_surface onto the interaction surface
         screen.blit(lever_surface, (200, 100))
+       
         screen.blit(leverMessage, (225,450))
+
+    if scare_event[0] == True and scare_event[1] == 0 and flashlight_status == True:
+        #Scare event initialization for flashlight fail
+        flashlight_status = False
+        flashlight_fail.play()
+        flashlight_fail.fadeout(500)
+        
+    if scare_event[0] == True and flashlight_status == False:
+        #Scare event loop for flashlight fail
+        completedark1 = pygame.Surface((800, 600), pygame.SRCALPHA)
+        completedark1.fill((0, 0, 0, 255))  # Adjust alpha value as needed
+        flashlightMessage = interactionfont.render('Press X to Fix your flashlight', False, (55, 55, 55))
+        screen.blit(completedark1, (0, 0))
+        screen.blit(flashlightMessage, (225,450))
+
+        if keys[pygame.K_x]:
+            flashlight_switch.play()
+            flashlight_switch.fadeout(500)
+            scare_event[0] = False
+            flashlight_status = True       
+
+    if scare_event[0] == True and scare_event[1] == 1 and shadowrun_status == False:
+        #Scare event initialization for Shadow run
+        shadowrun_status = True
+        Shadown_run_sound.play()
+
+    if scare_event[0] == True and scare_event[1] == 2 and spooksound_status == False:
+        #Scare event initialization for Shadow run
+        spooksound_status = True
+        scare_sound = pygame.mixer.Sound(soundlist[scare_event[2]])
+        print("RANDOM SOUND CHOSEN",scare_event[2])
+        scare_sound.play()
+    
+    if scare_event[0] == True and scare_event[1] == 2 and spooksound_status == True:
+        #Scare event initialization for Spook sound
+        spooksound_status = False
+        scare_event[0] = False
 
     pygame.display.flip()
     clock.tick(60)

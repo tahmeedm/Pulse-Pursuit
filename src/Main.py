@@ -3,7 +3,7 @@ import sys
 import math
 from Player import *
 from Flashlight import *
-from Rooms import *
+from Room import *
 from Touchables import *
 from Interactables import *
 from Lever import LeverGameScreen
@@ -11,6 +11,7 @@ from Obstacles import *
 import threading
 import time
 import subprocess
+import random
 
 WIDTH, HEIGHT = 800, 600
 
@@ -27,7 +28,7 @@ lever_games = [LeverGameScreen(400, 400) for _ in range(2)]  # Adjust the range 
 pygame.display.set_caption("Pulse Pursuit")
 
 # Create player instance (passing the path to the sprite sheet)
-player = Player("lib/sprites/player.png", initial_x=350, initial_y=250)
+player = Player("lib/sprites/player.png", initial_x=400, initial_y=300)
 
 # Load sound
 walk_fast = pygame.mixer.Sound("lib/sounds/Walk_fast1.mp3")
@@ -67,19 +68,19 @@ prompt_alpha2 = 0
 prompt_fade_speed =  7
 interactionfont = pygame.font.Font(None, 36)
 
-touchables = pygame.sprite.Group()
-spiketrap = Spiketrap(256, 256, (41, 12))
-touchables.add(spiketrap)
-pillbottle = Pillbottle(512, 512, (50, 50))
-touchables.add(pillbottle)
-doorTest = ClosedDoor(724 // 2, (600-519)//2, (32, 32), (0, 0), 0)
-touchables.add(doorTest)
-
-obstacle_group = pygame.sprite.Group()
-
 
 # Set up clock
 clock = pygame.time.Clock()
+
+rectangle_width = 722  # Adjust the width as needed
+rectangle_height = 518  # Adjust the height as needed
+
+WIDTH, HEIGHT = 800, 600
+
+rectangle_x = (WIDTH - rectangle_width) // 2
+rectangle_y = (HEIGHT - rectangle_height) // 2
+
+playableArea = pygame.Rect(rectangle_x, rectangle_y, rectangle_width, rectangle_height)
 
 # Function to continuously update the heart rate from the file
 def update_heart_rate():
@@ -104,18 +105,20 @@ timer_font = pygame.font.SysFont(None, 36)
 timer_duration = 300  # Duration in seconds (5 minutes)
 remaining_time = timer_duration
 
-# Calculate the dimensions and position for the white rectangle
-rectangle_width = 700  # Adjust the width as needed
-rectangle_height = 500  # Adjust the height as needed
+world_map_dimensions = 69
+world_map = [[None for _ in range(world_map_dimensions)] for _ in range(world_map_dimensions)]
 
-# Calculate the position to center the rectangle
-rectangle_x = (WIDTH - rectangle_width) // 2
-rectangle_y = (HEIGHT - rectangle_height) // 2
+current_room_position = [world_map_dimensions // 2, world_map_dimensions // 2]
 
-# Draw the white rectangle in the middle of the screen
-white_rect = pygame.Rect(rectangle_x, rectangle_y, rectangle_width, rectangle_height)
 
-rooms = Rooms()
+room = Room(list(current_room_position))
+room.set_room_type("Basement")
+
+world_map[current_room_position[0]][current_room_position[1]] = room
+
+hard_pity = 30
+minimum_pity = 3
+end_room_pity = 0
 
 # Main game loop
 running = True
@@ -202,22 +205,60 @@ while running:
         dy /= 1.41
 
     # Check if player touches a Touchable
-    touchable = pygame.sprite.spritecollideany(player, touchables)
+    touchable = pygame.sprite.spritecollideany(player, room.touchables)
     if touchable is not None:
-        touchable.use(remaining_time, player)
-        touchable.kill()        
         
-    # Clear the screen
-    screen.fill((255, 255, 255))
-    rooms.draw_room(screen)
-    pygame.draw.rect(screen, (255, 255, 255), white_rect)
-
-    # Update prompt alpha based on player's proximity to the closest item
-    closest_item = min(interactable_items,key=lambda item: pygame.math.Vector2(item.rect.centerx - player.rect.centerx,item.rect.centery - player.rect.centery).length())
-    closest_distance = pygame.math.Vector2(closest_item.rect.centerx - player.rect.centerx,closest_item.rect.centery - player.rect.centery).length()
-    prompt_alpha = min(255, prompt_alpha + prompt_fade_speed) if closest_distance < interaction_range else max(0,prompt_alpha - prompt_fade_speed)
+        if isinstance(touchable, ClosedDoor):
+            
+            r = random.randint(minimum_pity, hard_pity)
+                
+            direction = touchable.room_pos
+            match direction:
+                case "N":
+                    current_room_position[1] -= 1
+                case "E":
+                    current_room_position[0] += 1
+                case "S":
+                    current_room_position[1] += 1
+                case "W":
+                    current_room_position[0] -= 1
+            
+            if(world_map[current_room_position[0]][current_room_position[1]] is None):
+                end_room_pity += 1
+                
+            if (r <= end_room_pity and world_map[current_room_position[0]][current_room_position[1]] is None):
+                room = Room(current_room_position)
+                room.set_room_type("EndRoom")
+                player.enter_room(direction)
+            else:
+                room = touchable.use(room, world_map, player)
+                
+        elif isinstance(touchable, OpenedDoor):
+            room = touchable.use(world_map, player)
+            
+            direction = touchable.room_pos
+            match direction:
+                case "N":
+                    current_room_position[1] -= 1
+                case "E":
+                    current_room_position[0] += 1
+                case "S":
+                    current_room_position[1] += 1
+                case "W":
+                    current_room_position[0] -= 1
+            
+        else:
+            touchable.use(remaining_time, player)
+            touchable.kill()
+        
+    room.draw_room(screen, playableArea)
     
-    # Check for interactions with each item
+        # Update prompt alpha based on player's proximity to the closest item
+    closest_item = min(interactable_items, key=lambda item: pygame.math.Vector2(item.rect.centerx - player.rect.centerx, item.rect.centery - player.rect.centery).length())
+    closest_distance = pygame.math.Vector2(closest_item.rect.centerx - player.rect.centerx, closest_item.rect.centery - player.rect.centery).length()
+    prompt_alpha = min(255, prompt_alpha + prompt_fade_speed) if closest_distance < interaction_range else max(0, prompt_alpha - prompt_fade_speed)
+    
+    #Check for interactions with each item
     for item in pygame.sprite.spritecollide(player, interactable_items, False):
         # Interaction logic
         if keys[pygame.K_f] and not interaction_open:
@@ -232,8 +273,6 @@ while running:
 
     # Draw everything
     player_group.draw(screen)
-    touchables.draw(screen)
-    obstacle_group.draw(screen)
     
     # Draw the black layer on top of the background
     black_layer = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)

@@ -61,7 +61,7 @@ class Room:
         self.touchables.add(Pillbottle(70, 450, (50, 50)))
         self.obstacle_group.add(Box(128, 120, (100, 100)))
         self.obstacle_group.add(Box(420, 400, (60, 50)))
-        self.obstacle_group.add(Table(500, 100, (100, 30)))
+        self.obstacle_group.add(Table(500, 125, (100, 30)))
         self.obstacle_group.add(Box(360, 400, (69, 69)))
         self.obstacle_group.add(Box(340, 300, (69, 69)))
         self.obstacle_group.add(Box(490, 300, (69, 69)))
@@ -73,8 +73,8 @@ class Room:
         self.obstacle_group.add(Box(500, 250, (69, 69)))
         self.obstacle_group.add(Box(600, 400, (64, 45)))
         self.touchables.add(Spiketrap(700, 429, (50, 50)))
-        self.obstacle_group.add(Box(260, 500, (100, 100)))
-
+        self.obstacle_group.add(Chair(650, 333, (50, 50)))
+        self.obstacle_group.add(Box(669, 200, (69, 69)))
     
     def makeAbandonedHouse(self):
         self.current_background = self.room_backgrounds[1]
@@ -90,7 +90,7 @@ class Room:
         self.obstacle_group.add(Table(599, 179, (80, 40)))
         self.obstacle_group.add(Bed(232, 70, (80, 40)))
         self.obstacle_group.add(Box(367, 254, (100, 100)))
-        self.obstacle_group.add(Box(483, 158, (50, 50)))
+        self.obstacle_group.add(Chair(535, 158, (50, 50)))
         self.obstacle_group.add(Chair(666, 520, (50, 50)))
         self.obstacle_group.add(Box(650, 450, (100, 100)))
         self.obstacle_group.add(Box(70, 450, (69, 69)))
@@ -107,11 +107,18 @@ class Room:
         self.obstacle_group.add(Bush(666, 555, (80, 30)))
         self.obstacle_group.add(Bush(520, 333, (80, 33)))
         self.obstacle_group.add(Bush(111, 111, (60, 30)))
-        self.obstacle_group.add(Tree(666, 150, (60, 200)))
+        self.obstacle_group.add(Tree(666, 200, (60, 200)))
         self.obstacle_group.add(Bush(600, 120, (90, 40)))
         self.touchables.add(Pillbottle(120, 555, (50, 50)))
         self.touchables.add(Spiketrap(200, 256, (50, 25)))
         self.obstacle_group.add(Tree(200, 550, (60, 150)))
+        self.obstacle_group.add(Rocks(210, 290, (30, 30)))
+        self.obstacle_group.add(Rocks(360, 238, (30, 30)))
+        self.obstacle_group.add(Bush(669, 420, (70, 30)))
+        self.obstacle_group.add(Rocks(510, 500, (30, 30)))
+        self.obstacle_group.add(Rocks(350, 111, (30, 30)))
+        self.touchables.add(Pillbottle(710, 50, (50, 50)))
+        self.touchables.add(Spiketrap(300, 500, (40, 30)))
     
     def makeEndRoom(self):
         self.makeBasement

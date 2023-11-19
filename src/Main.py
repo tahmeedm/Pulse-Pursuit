@@ -388,10 +388,10 @@ while running:
         delta = delta2
         averageHeartRate = x
         
-    print(averageHeartRate)
-    print(delta)    
+    #print(averageHeartRate)
+    #print(delta)    
     
-    if (tickCount >= 300):
+    if (tickCount >= tickThreshold):
         distance_monster -= 1
         tickCount = 0
         

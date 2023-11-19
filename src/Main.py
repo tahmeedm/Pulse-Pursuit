@@ -46,6 +46,7 @@ acceleration_threshold = 150
 
 # Set up sprite group
 player_group = pygame.sprite.Group()
+obstacle_group = pygame.sprite.Group()
 player_group.add(player)
 
 # Create item instances
@@ -185,7 +186,7 @@ while running:
     # Check if the new hitbox would collide with any obstacles
     collide = any(new_hitbox.colliderect(obstacle.rect) for obstacle in obstacle_group)
 
-    if white_rect.contains(pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)) and not collide:
+    if playableArea.contains(pygame.Rect(new_hitbox_x, new_hitbox_y, player.hitbox.width, player.hitbox.height)) and not collide:
         # If within bounds, update the player's position and hitbox
         player.update(dx, dy)
         player.hitbox.move(dx, dy)   
